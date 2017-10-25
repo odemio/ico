@@ -1,29 +1,52 @@
-# truffle-init-webpack
-Example webpack project with Truffle. Includes contracts, migrations, tests, user interface and webpack build pipeline.
+# ODEM ICO
 
-## Usage
+## Development
 
-To initialize a project with this example, run `truffle init webpack` inside an empty directory.
+**Dependencies**
 
-## Building and the frontend
+- `node@8.5.x`
+- `truffle@^4.0.x`
+- `ethereumjs-testrpc@^4.0.x`
+- `zeppelin-solidity@1.3.X`
 
-1. First run `truffle compile`, then run `truffle migrate` to deploy the contracts onto your network of choice (default "development").
-1. Then run `npm run dev` to build the app and serve it on http://localhost:8080
+## Setting Up
 
-## Possible upgrades
+- Clone this repository.
 
-* Use the webpack hotloader to sense when contracts or javascript have been recompiled and rebuild the application. Contributions welcome!
+- Install all [system dependencies](#development).
+  - `npm install`
 
-## Common Errors
+- Compile contract code
+  - `node_modules/.bin/truffle compile`
 
-* **Error: Can't resolve '../build/contracts/MetaCoin.json'**
+- Start testrpc server
+  - `testrpc --accounts="10"`
 
-This means you haven't compiled or migrated your contracts yet. Run `truffle compile` and `truffle migrate` first.
+- Deploy contracts
+  - `node_modules/.bin/truffle migrate`
 
-Full error:
+## Running tests
+  - `node_modules/.bin/truffle test`
 
-```
-ERROR in ./app/main.js
-Module not found: Error: Can't resolve '../build/contracts/MetaCoin.json' in '/Users/tim/Documents/workspace/Consensys/test3/app'
- @ ./app/main.js 11:16-59
+# If you work on these contracts, write tests!
+**Testing Pattern**
+- a good pattern to use, when testing restrictions on contract is to structure this way:
+
+```javascript
+describe("testing user restriction", () => {
+    beforeEach("deploy and prepare", () => {
+        // Deploy a contract(s) and prepare it up
+        // to the pass / fail point
+    })
+
+    it("test the failing user", () => {
+        // Test something with the bad user
+        // in as few steps as possible
+    })
+
+    it("test the good user", () => {
+        // Test the VERY SAME steps,
+        // with only difference being the good user
+    })
+})
 ```
