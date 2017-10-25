@@ -1,8 +1,6 @@
-// var ConvertLib = artifacts.require("./ConvertLib.sol");
-// var MetaCoin = artifacts.require("./MetaCoin.sol");
-//
-// module.exports = function(deployer) {
-//   deployer.deploy(ConvertLib);
-//   deployer.link(ConvertLib, MetaCoin);
-//   deployer.deploy(MetaCoin);
-// };
+const ODEMToken = artifacts.require("./ODEMToken.sol");
+
+module.exports = function(deployer, network, [_, wallet]) {
+    // token deployed only for testing purposes. NOTE: dont use it for the mainnet.
+    deployer.deploy(ODEMToken);
+};

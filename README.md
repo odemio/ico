@@ -1,4 +1,4 @@
-# ODEM ICO
+# ODEM.io ICO
 
 ## Development
 
