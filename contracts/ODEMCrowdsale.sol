@@ -42,4 +42,20 @@ contract ODEMCrowdsale is CappedCrowdsale, FinalizableCrowdsale {
     function createTokenContract() internal returns (MintableToken) {
         return new ODEMToken();
     }
+
+    /**
+     * @dev triggers token transfer mechanism. To be used after the crowdsale is finished
+     */
+    function unpauseToken() onlyOwner {
+        require(isFinalized);
+        AllPublicArtToken(token).unpause();
+    }
+
+    /**
+     * @dev Pauses token transfers. Only used after crowdsale finishes
+     */
+    function pauseToken() onlyOwner {
+        require(isFinalized);
+        AllPublicArtToken(token).pause();
+    }
 }
