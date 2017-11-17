@@ -1,8 +1,8 @@
 pragma solidity ^0.4.17;
 
-import "zeppelin-solidity/contracts/crowdsale/CappedCrowdsale.sol";
 import "zeppelin-solidity/contracts/crowdsale/FinalizableCrowdsale.sol";
 import "zeppelin-solidity/contracts/lifecycle/Pausable.sol";
+import "./TeamAndAdvisorsAllocation.sol";
 import "./ODEMToken.sol";
 
 /**
@@ -12,16 +12,27 @@ import "./ODEMToken.sol";
 contract ODEMCrowdsale is CappedCrowdsale, FinalizableCrowdsale, Pausable {
     uint256 constant public totalSupply = 245714286e18;
     uint256 constant public totalSupplyCrowdsale = 172000000e18; // 70% for sale during crowdsale
-    uint256 constant public presaleSupply = 32000000e18; // 700K
-    uint256 public constant ALLOCATION_SHARE = 73714286e18; // 30 %
+    uint256 constant public presaleSupply = 32000000e18;
+
+    // Company and advisor allocation figures
+    uint256 public constant COMPANY_SHARE = 58914286e18;
+    uint256 public constant TEAM_ADVISORS_SHARE = 14800000e18;
+
     uint256 public presaleEndTime;
+
+    TeamAndAdvisorsAllocation public teamAndAdvisorsAllocation;
+
+    // for kyc/aml purposes
+    /*modifier whenVerified() {
+        assert(register.certified(msg.sender));
+        _;
+    }*/
 
     /**
      * @dev Contract constructor function
      * @param _startTime The timestamp of the beginning of the crowdsale
      * @param _endTime Timestamp when the crowdsale will finish
      * @param _rate The token rate per ETH
-     * @param _cap Crowdsale cap
      * @param _wallet Multisig wallet that will hold the crowdsale funds.
      */
     function ODEMCrowdsale
@@ -30,10 +41,8 @@ contract ODEMCrowdsale is CappedCrowdsale, FinalizableCrowdsale, Pausable {
             uint256 _presaleEndTime,
             uint256 _endTime,
             uint256 _rate,
-            uint256 _cap,
             address _wallet
         )
-        CappedCrowdsale(_cap)
         FinalizableCrowdsale()
         Crowdsale(_startTime, _endTime, _rate, _wallet)
     {
@@ -49,32 +58,17 @@ contract ODEMCrowdsale is CappedCrowdsale, FinalizableCrowdsale, Pausable {
     }
 
     /**
-     * @dev triggers token transfer mechanism. To be used after the crowdsale is finished
-     */
-    function unpauseToken() onlyOwner {
-        require(isFinalized);
-        ODEMToken(token).unpause();
-    }
-
-    /**
-     * @dev Pauses token transfers. Only used after crowdsale finishes
-     */
-    function pauseToken() onlyOwner {
-        require(isFinalized);
-        ODEMToken(token).pause();
-    }
-
-    /**
      * @dev payable function that allow token purchases
      * @param beneficiary Address of the purchaser
      */
     function buyTokens(address beneficiary)
         public
         whenNotPaused
+        /*whenVerified*/
         payable
     {
         require(beneficiary != address(0));
-        require(validPurchase());
+        require(validPurchase() && token.totalSupply() <= totalSupplyCrowdsale);
 
         if (now >= startTime && now <= presaleEndTime)
             require(checkPreSaleCap());
@@ -105,7 +99,16 @@ contract ODEMCrowdsale is CappedCrowdsale, FinalizableCrowdsale, Pausable {
      * @dev finalizes crowdsale
      */
     function finalization() internal {
-       token.mint(wallet, ALLOCATION_SHARE);
+       token.mint(wallet, COMPANY_SHARE);
+       token.mint(wallet, TEAM_ADVISORS_SHARE);
+
+       if (token.totalSupply() < totalSupplyCrowdsale) {
+           uint256 remainingTokens = totalSupplyCrowdsale.sub(totalSupply);
+
+           token.mint(wallet, remainingTokens);
+       }
+
+       ODEMToken(token).unpause();
 
        super.finalization();
     }
