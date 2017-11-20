@@ -2,22 +2,28 @@ pragma solidity ^0.4.17;
 
 import "zeppelin-solidity/contracts/token/MintableToken.sol";
 import "zeppelin-solidity/contracts/token/PausableToken.sol";
-import "zeppelin-solidity/contracts/token/BurnableToken.sol";
 
 /**
  * @title ODEM Token contract - ERC20 compatible token contract.
  * @author Gustavo Guimaraes - <gustavo@odem.io>
  */
-contract ODEMToken is BurnableToken, PausableToken, MintableToken {
+contract ODEMToken is PausableToken, MintableToken {
     string public constant name = "ODEM Token";
     string public constant symbol = "ODEM";
     uint8 public constant decimals = 18;
 
+    event Burn(address indexed burner, uint256 value);
+
     /**
-     * @dev makes a number token unused forever
-     * @param _value Number of tokens to burn
+     * @dev Burns a specific amount of tokens.
+     * @param _value The amount of token to be burned.
      */
     function burn(uint256 _value) public {
-        super.burn(_value);
+        require(_value > 0);
+
+        address burner = msg.sender;
+        balances[burner] = balances[burner].sub(_value);
+        totalSupply = totalSupply.sub(_value);
+        Burn(burner, _value);
     }
 }

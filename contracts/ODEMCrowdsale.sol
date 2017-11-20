@@ -9,7 +9,7 @@ import "./ODEMToken.sol";
  * @title ODEM Crowdsale contract - crowdsale contract for the APA tokens.
  * @author Gustavo Guimaraes - <gustavo@odem.io>
  */
-contract ODEMCrowdsale is CappedCrowdsale, FinalizableCrowdsale, Pausable {
+contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     uint256 constant public totalSupply = 245714286e18;
     uint256 constant public totalSupplyCrowdsale = 172000000e18; // 70% for sale during crowdsale
     uint256 constant public presaleSupply = 32000000e18;
@@ -99,18 +99,19 @@ contract ODEMCrowdsale is CappedCrowdsale, FinalizableCrowdsale, Pausable {
      * @dev finalizes crowdsale
      */
     function finalization() internal {
-       token.mint(wallet, COMPANY_SHARE);
-       token.mint(wallet, TEAM_ADVISORS_SHARE);
+        teamAndAdvisorsAllocation = new TeamAndAdvisorsAllocation(owner, token);
+        token.mint(wallet, COMPANY_SHARE);
+        token.mint(teamAndAdvisorsAllocation, TEAM_ADVISORS_SHARE);
 
-       if (token.totalSupply() < totalSupplyCrowdsale) {
-           uint256 remainingTokens = totalSupplyCrowdsale.sub(totalSupply);
+        if (token.totalSupply() < totalSupplyCrowdsale) {
+            uint256 remainingTokens = totalSupplyCrowdsale.sub(totalSupply);
 
-           token.mint(wallet, remainingTokens);
-       }
+            token.mint(wallet, remainingTokens);
+        }
 
-       ODEMToken(token).unpause();
+        ODEMToken(token).unpause();
 
-       super.finalization();
+        super.finalization();
     }
 
     /**

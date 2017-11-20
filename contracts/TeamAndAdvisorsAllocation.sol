@@ -1,8 +1,12 @@
-pragma solidity ^0.4.13;
+pragma solidity ^0.4.17;
 
 import './ODEMToken.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 
+/**
+ * @title ODEM Token contract - ERC20 compatible token contract.
+ * @author Gustavo Guimaraes - <gustavo@odem.io>
+ */
 contract TeamAndAdvisorsAllocation {
     using SafeMath for uint;
     address public owner;
@@ -10,7 +14,7 @@ contract TeamAndAdvisorsAllocation {
     uint256 public canSelfDestruct;
     uint256 public tokensCreated;
     uint256 public allocatedTokens;
-    uint256 totalCompanyAllocation = 14800000e18;
+    uint256 private totalTeamAndAdvisorsAllocation = 14800000e18;
 
     mapping (address => uint256) public teamAndAdvisorsAllocations;
 
@@ -25,11 +29,11 @@ contract TeamAndAdvisorsAllocation {
     }
 
     /**
-     * @dev constructor function that sets owner and token for the CompanyAllocation contract
+     * @dev constructor function that sets owner and token for the TeamAndAdvisorsAllocation contract
      * @param _owner Contract owner
      * @param token Token contract address for ODEMToken
      */
-    function CompanyAllocation(address _owner, address token) {
+    function TeamAndAdvisorsAllocation(address _owner, address token) {
         odem = ODEMToken(token);
         unlockedAt = now.add(182 days);
         canSelfDestruct = now.add(365 days);
@@ -42,7 +46,7 @@ contract TeamAndAdvisorsAllocation {
      * @param allocationValue Number of tokens allocated to a founder
      * @return true if address is correctly added
      */
-    function addCompanyAllocation(address teamOrAdvisorsAddress, uint256 allocationValue)
+    function addTeamAndAdvisorsAllocation(address teamOrAdvisorsAddress, uint256 allocationValue)
         external
         onlyOwner
         returns(bool)
@@ -50,7 +54,7 @@ contract TeamAndAdvisorsAllocation {
         assert(teamAndAdvisorsAllocations[teamOrAdvisorsAddress] == 0); // can only add once.
 
         allocatedTokens = allocatedTokens.add(allocationValue);
-        require(allocatedTokens <= totalCompanyAllocation);
+        require(allocatedTokens <= totalTeamAndAdvisorsAllocation);
 
         teamAndAdvisorsAllocations[teamOrAdvisorsAddress] = allocationValue;
         return true;

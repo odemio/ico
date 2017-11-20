@@ -1,4 +1,5 @@
 const ODEMCrowdsale = artifacts.require("./ODEMCrowdsale.sol");
+const TeamAndAdvisorsAllocation = artifacts.require("./TeamAndAdvisorsAllocation.sol");
 const ODEMToken = artifacts.require("./ODEMToken.sol");
 
 import { should, ensuresException, getBlockNow } from './helpers/utils'
@@ -6,28 +7,29 @@ import timer from './helpers/timer'
 
 const BigNumber = web3.BigNumber
 
-contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2]) => {
+contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2, advisor1, advisor2]) => {
     const rate = new BigNumber(50)
-    const cap = new BigNumber(1000000000e+18)
+    const newRate =  new BigNumber(172000000)
     const dayInSecs = 86400
     const value = new BigNumber(1e+18)
 
-    const expectedCompanyTokens = new BigNumber(73714286e+18);
+    const expectedCompanyTokens = new BigNumber(58914286e+18)
+    const expectedTeamAndAdvisorsAllocation = new BigNumber(14800000e+18)
 
     let startTime, presaleEndTime, endTime
     let crowdsale, token
+    let teamAndAdvisorsAllocationsContract
 
     const newCrowdsale = (rate) => {
         startTime = getBlockNow() + 20 // crowdsale starts in 20 seconds
         presaleEndTime = startTime + (dayInSecs * 20) // 20 days
-        endTime = getBlockNow() + dayInSecs * 60 // 60 days
+        endTime = startTime + (dayInSecs * 60) // 60 days
 
         return ODEMCrowdsale.new(
             startTime,
             presaleEndTime,
             endTime,
             rate,
-            cap,
             wallet
         )
     }
@@ -36,11 +38,6 @@ contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2]) => {
         crowdsale = await newCrowdsale(rate)
         token = ODEMToken.at(await crowdsale.token())
     })
-
-    it('has a cap', async () => {
-        const crowdsaleCap = await crowdsale.cap()
-        crowdsaleCap.toNumber().should.equal(cap.toNumber())
-    });
 
     it('has a normal crowdsale rate', async () => {
         const crowdsaleRate = await crowdsale.rate()
@@ -119,20 +116,135 @@ contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2]) => {
         })
     })
 
-    describe('crowdsale finalization', () => {
-        beforeEach('finalizes crowdsale and assigns tokens to company', async () => {
-            crowdsale = await newCrowdsale(rate)
+    describe('crowdsale finalization', function () {
+        beforeEach(async function () {
+            crowdsale = await newCrowdsale(newRate)
             token = ODEMToken.at(await crowdsale.token())
 
-            timer(dayInSecs * 62)
+            await timer(dayInSecs * 42)
 
+            await crowdsale.buyTokens(buyer, {value})
+
+            await timer(dayInSecs * 20)
             await crowdsale.finalize()
-            await crowdsale.unpauseToken() // unpause token so transfer is permitted
         })
 
         it('assigns tokens correctly to company', async function () {
             const balanceCompany = await token.balanceOf(wallet)
+
             balanceCompany.should.be.bignumber.equal(expectedCompanyTokens)
+        })
+
+        it('token is unpaused after crowdsale ends', async function () {
+            let paused = await token.paused()
+            paused.should.be.false
+        })
+    })
+
+    describe('teamAndAdvisorsAllocations', function () {
+        beforeEach(async function () {
+            crowdsale = await newCrowdsale(newRate)
+            token = ODEMToken.at(await crowdsale.token())
+
+            await timer(50)
+
+            await crowdsale.buyTokens(buyer, {value})
+
+            timer(dayInSecs * 70)
+            await crowdsale.finalize()
+
+            const teamAndAdvisorsAllocations = await crowdsale.teamAndAdvisorsAllocation()
+            teamAndAdvisorsAllocationsContract = TeamAndAdvisorsAllocation.at(teamAndAdvisorsAllocations)
+        })
+
+        it('assigns tokens correctly to TeamAndAdvisorsAllocation contract', async function () {
+            const teamOrAdvisorsAddress = await teamAndAdvisorsAllocationsContract.address
+
+            const balance = await token.balanceOf(teamOrAdvisorsAddress)
+            balance.should.be.bignumber.equal(expectedTeamAndAdvisorsAllocation)
+        })
+
+        it('adds advisors and their allocation', async function () {
+            await teamAndAdvisorsAllocationsContract.addTeamAndAdvisorsAllocation(advisor1, 800)
+            await teamAndAdvisorsAllocationsContract.addTeamAndAdvisorsAllocation.sendTransaction(advisor2, 1000, {from: owner})
+            const allocatedTokens = await teamAndAdvisorsAllocationsContract.allocatedTokens()
+            allocatedTokens.should.be.bignumber.equal(1800)
+
+            const allocationsForFounder1 = await teamAndAdvisorsAllocationsContract.teamAndAdvisorsAllocations.call(advisor1)
+            const allocationsForFounder2 = await teamAndAdvisorsAllocationsContract.teamAndAdvisorsAllocations.call(advisor2)
+            allocationsForFounder1.should.be.bignumber.equal(800)
+            allocationsForFounder2.should.be.bignumber.equal(1000)
+        })
+
+        it('does NOT unlock advisors allocation before the unlock period is up', async function () {
+            await teamAndAdvisorsAllocationsContract.addTeamAndAdvisorsAllocation(advisor1, 800)
+            await teamAndAdvisorsAllocationsContract.addTeamAndAdvisorsAllocation.sendTransaction(advisor2, 1000, {from: owner})
+
+            try {
+                await teamAndAdvisorsAllocationsContract.unlock({from: advisor1})
+                assert.fail()
+            } catch(e) {
+                ensuresException(e)
+            }
+
+            const tokensCreated = await teamAndAdvisorsAllocationsContract.tokensCreated()
+            tokensCreated.should.be.bignumber.equal(0)
+        })
+
+        it('unlocks advisors allocation after the unlock period is up', async function () {
+            let tokensCreated
+            await teamAndAdvisorsAllocationsContract.addTeamAndAdvisorsAllocation(advisor1, 800)
+            await teamAndAdvisorsAllocationsContract.addTeamAndAdvisorsAllocation.sendTransaction(advisor2, 1000, {from: owner})
+
+            tokensCreated = await teamAndAdvisorsAllocationsContract.tokensCreated()
+            tokensCreated.should.be.bignumber.equal(0)
+
+            await timer(dayInSecs * 190)
+
+            await teamAndAdvisorsAllocationsContract.unlock({from: advisor1})
+            await teamAndAdvisorsAllocationsContract.unlock({from: advisor2})
+
+            const tokenBalanceFounder1 = await token.balanceOf(advisor1)
+            const tokenBalanceFounder2 = await token.balanceOf(advisor2)
+            tokenBalanceFounder1.should.be.bignumber.equal(800)
+            tokenBalanceFounder2.should.be.bignumber.equal(1000)
+        })
+
+        it('does NOT kill contract before one year is up', async function () {
+            await teamAndAdvisorsAllocationsContract.addTeamAndAdvisorsAllocation(advisor1, 800)
+            await teamAndAdvisorsAllocationsContract.addTeamAndAdvisorsAllocation.sendTransaction(advisor2, 1000, {from: owner})
+
+            try {
+                await teamAndAdvisorsAllocationsContract.kill()
+                assert.fail()
+            } catch(e) {
+                ensuresException(e)
+            }
+
+            const teamOrAdvisorsAddress = await teamAndAdvisorsAllocationsContract.address
+            const balance = await token.balanceOf(teamOrAdvisorsAddress)
+            balance.should.be.bignumber.equal(expectedTeamAndAdvisorsAllocation)
+
+            const tokensCreated = await teamAndAdvisorsAllocationsContract.tokensCreated()
+            tokensCreated.should.be.bignumber.equal(0)
+        })
+
+        it('is able to kill contract after one year', async () => {
+            await teamAndAdvisorsAllocationsContract.addTeamAndAdvisorsAllocation.sendTransaction(advisor2, 1000, { from: owner })
+
+            const tokensCreated = await teamAndAdvisorsAllocationsContract.tokensCreated()
+            tokensCreated.should.be.bignumber.equal(0)
+
+            await timer(dayInSecs * 400) // 400 days after
+
+            await teamAndAdvisorsAllocationsContract.kill()
+
+            const teamOrAdvisorsAddress = await teamAndAdvisorsAllocationsContract.address
+            const balance = await token.balanceOf(teamOrAdvisorsAddress)
+            balance.should.be.bignumber.equal(0)
+
+            const balanceOwner = await token.balanceOf(owner)
+            balanceOwner.should.be.bignumber.equal(expectedTeamAndAdvisorsAllocation)
         })
     })
 })
