@@ -4,9 +4,10 @@ import './ODEMToken.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 
 /**
- * @title ODEM Token contract - ERC20 compatible token contract.
+ * @title Team and Advisors Token Allocation contract
  * @author Gustavo Guimaraes - <gustavo@odem.io>
  */
+ 
 contract TeamAndAdvisorsAllocation {
     using SafeMath for uint;
     address public owner;
@@ -18,7 +19,7 @@ contract TeamAndAdvisorsAllocation {
 
     mapping (address => uint256) public teamAndAdvisorsAllocations;
 
-    ODEMToken odem;
+    ODEMToken public odem;
 
     /**
      * @dev Throws if called by any account other than the owner.
@@ -33,7 +34,7 @@ contract TeamAndAdvisorsAllocation {
      * @param _owner Contract owner
      * @param token Token contract address for ODEMToken
      */
-    function TeamAndAdvisorsAllocation(address _owner, address token) {
+    function TeamAndAdvisorsAllocation(address _owner, address token) public {
         odem = ODEMToken(token);
         unlockedAt = now.add(182 days);
         canSelfDestruct = now.add(365 days);
@@ -61,7 +62,8 @@ contract TeamAndAdvisorsAllocation {
     }
 
     /**
-     * @dev Allow company to unlock allocated tokens by transferring them whitelisted addresses. Need to be called by each address
+     * @dev Allow company to unlock allocated tokens by transferring them whitelisted addresses.
+     * Need to be called by each address
      */
     function unlock() external {
         assert(now >= unlockedAt);
@@ -81,13 +83,13 @@ contract TeamAndAdvisorsAllocation {
     /**
      * @dev allow for selfdestruct possibility and sending funds to owner
      */
-    function kill() onlyOwner {
-        assert (now >= canSelfDestruct);
+    function kill() public onlyOwner {
+        assert(now >= canSelfDestruct);
         uint256 balance = odem.balanceOf(this);
 
         if (balance > 0) {
- 		    odem.transfer(owner, balance);
- 		}
+            odem.transfer(owner, balance);
+        }
 
         selfdestruct(owner);
     }

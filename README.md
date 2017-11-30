@@ -5,7 +5,7 @@
 **Dependencies**
 
 - `node@8.5.x`
-- `truffle@^4.0.x`
+- `truffle@^4.0.1`
 - `ethereumjs-testrpc@^4.0.x`
 - `zeppelin-solidity@1.3.X`
 
@@ -23,10 +23,14 @@
   - `testrpc --accounts="10"`
 
 - Deploy contracts
-  - `node_modules/.bin/truffle migrate`
+  - `node_modules/.bin/truffle develop`
+  Once you are in the develop console, run the command:
+  - `migrate --reset`
 
 ## Running tests
-  - `node_modules/.bin/truffle test`
+    - `node_modules/.bin/truffle develop`
+    Once you are in the develop console, run the command:
+    - `test`
 
 # If you work on these contracts, write tests!
 **Testing Pattern**
