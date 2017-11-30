@@ -6,7 +6,7 @@ import "./TeamAndAdvisorsAllocation.sol";
 import "./ODEMToken.sol";
 
 /**
- * @title ODEM Crowdsale contract - crowdsale contract for the APA tokens.
+ * @title ODEM Crowdsale contract - crowdsale contract for the ODEM tokens.
  * @author Gustavo Guimaraes - <gustavo@odem.io>
  */
 contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
