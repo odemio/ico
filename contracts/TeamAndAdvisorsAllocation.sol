@@ -1,4 +1,4 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.18;
 
 import './ODEMToken.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
@@ -7,7 +7,7 @@ import 'zeppelin-solidity/contracts/math/SafeMath.sol';
  * @title Team and Advisors Token Allocation contract
  * @author Gustavo Guimaraes - <gustavo@odem.io>
  */
- 
+
 contract TeamAndAdvisorsAllocation {
     using SafeMath for uint;
     address public owner;

@@ -18,7 +18,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-register": "^6.26.0",
-    "copy-webpack-plugin": "^4.2.0",
+    "copy-webpack-plugin": "^4.2.3",
     "css-loader": "^0.26.4",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^6.2.1",
@@ -29,15 +29,15 @@
     "html-webpack-plugin": "^2.30.1",
     "json-loader": "^0.5.7",
     "style-loader": "^0.13.2",
-    "truffle-contract": "^3.0.0",
+    "truffle-contract": "^3.0.1",
     "web3": "^0.18.4",
     "webpack": "^2.7.0",
-    "webpack-dev-server": "^2.9.3"
+    "webpack-dev-server": "^2.9.5"
   },
   "dependencies": {
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
-    "chai-bignumber": "^2.0.1",
-    "zeppelin-solidity": "^1.3.0"
+    "chai-bignumber": "^2.0.2",
+    "zeppelin-solidity": "^1.4.0"
   }
 }
