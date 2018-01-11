@@ -9,6 +9,7 @@ import "./ODEMToken.sol";
  * @title ODEM Crowdsale contract - crowdsale contract for the ODEM tokens.
  * @author Gustavo Guimaraes - <gustavo@odem.io>
  */
+
 contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     uint256 constant public totalSupply = 245714286e18;
     uint256 constant public totalSupplyCrowdsale = 172000000e18; // 70% for sale during crowdsale
@@ -21,6 +22,8 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     uint256 public presaleEndTime;
 
     TeamAndAdvisorsAllocation public teamAndAdvisorsAllocation;
+
+    event PrivateInvestorTokenPurchase(address indexed investor, uint256 rate, uint256 bonus, uint weiAmount);
 
     // for kyc/aml purposes
     /*modifier whenVerified() {
@@ -43,20 +46,44 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
             uint256 _rate,
             address _wallet
         )
+        public
         FinalizableCrowdsale()
         Crowdsale(_startTime, _endTime, _rate, _wallet)
     {
+
         presaleEndTime = _presaleEndTime;
         ODEMToken(token).pause();
     }
 
     /**
-     * @dev Creates ODEM token contract. This is called on the constructor function of the Crowdsale contract
+     * @dev change crowdsale rate
+     * @param newRate Figure that corresponds to the new rate per token
      */
-    function createTokenContract() internal returns (MintableToken) {
-        return new ODEMToken();
+    function setRate(uint256 newRate) external onlyOwner {
+        require(newRate != 0);
+        rate = newRate;
     }
 
+    /**
+     * @dev Mint tokens for private investors before crowdsale starts
+     * @param investorsAddress Purchaser's address
+     * @param rate Rate of the purchase
+     * @param bonus Number that represents the bonus
+     * @param weiAmount Amount that the investors sent during the private sale period
+     */
+    function mintTokenForPrivateInvestors(address investorsAddress, uint256 rate, uint256 bonus, uint256 weiAmount)
+        external
+        onlyOwner
+    {
+        uint256 tokens = rate.mul(weiAmount);
+        uint256 tokenBonus = tokens.mul(bonus).div(100);
+        tokens = tokens.add(tokenBonus);
+
+        token.mint(investorsAddress, tokens);
+        PrivateInvestorTokenPurchase(investorsAddress, rate, bonus, weiAmount);
+    }
+
+    /* function create */
     /**
      * @dev payable function that allow token purchases
      * @param beneficiary Address of the purchaser
@@ -96,6 +123,13 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     }
 
     /**
+     * @dev Creates ODEM token contract. This is called on the constructor function of the Crowdsale contract
+     */
+    function createTokenContract() internal returns (MintableToken) {
+        return new ODEMToken();
+    }
+
+    /**
      * @dev finalizes crowdsale
      */
     function finalization() internal {
@@ -109,8 +143,8 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
             token.mint(wallet, remainingTokens);
         }
 
+        token.finishMinting();
         ODEMToken(token).unpause();
-
         super.finalization();
     }
 
@@ -118,9 +152,9 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
      * @dev checks whether it is pre sale and if there is minimum purchase requirement
      * @return truthy if token total supply is less than presaleSupply
      */
-     function checkPreSaleCap() internal returns (bool) {
+    function checkPreSaleCap() internal returns (bool) {
         return token.totalSupply() <= presaleSupply;
-     }
+    }
 
      /**
      * @dev Fetches Bonus tier percentage per bonus milestones
