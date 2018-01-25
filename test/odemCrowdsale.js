@@ -11,7 +11,7 @@ const BigNumber = web3.BigNumber
 
 contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2, advisor1, advisor2]) => {
   const rate = new BigNumber(50)
-  const newRate = new BigNumber(172000000)
+  const newRate = new BigNumber(245714286)
   const dayInSecs = 86400
   const value = new BigNumber(1e18)
 
@@ -183,18 +183,18 @@ contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2, advisor1, advisor2]) =
     })
   })
 
-  describe('#mintTokenForPrivateInvestors', function () {
+  describe('#mintTokenForPreCrowdsale', function () {
     it('mints tokens for private investors after crowdsale has started', async () => {
       timer(50)
 
-      await crowdsale.mintTokenForPrivateInvestors(buyer, rate, 0, value)
+      await crowdsale.mintTokenForPreCrowdsale(buyer, rate, 0, value)
 
       const buyerBalance = await token.balanceOf(buyer)
       buyerBalance.should.be.bignumber.equal(50e18)
     })
 
     it('mints tokens to private investors before the crowdsale starts', async () => {
-      const { logs } = await crowdsale.mintTokenForPrivateInvestors(buyer, rate, 0, value)
+      const { logs } = await crowdsale.mintTokenForPreCrowdsale(buyer, rate, 0, value)
 
       const buyerBalance = await token.balanceOf(buyer)
       buyerBalance.should.be.bignumber.equal(50e18)

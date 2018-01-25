@@ -10,12 +10,12 @@ contract('ODEMToken', () => {
 
   it('has a name', async () => {
     const name = await token.name()
-    name.should.be.equal("ODEM Token")
+    name.should.be.equal('ODEM Token')
   })
 
   it('possesses a symbol', async () => {
     const symbol = await token.symbol()
-    symbol.should.be.equal("ODEM")
+    symbol.should.be.equal('ODEM')
   })
 
   it('contains 18 decimals', async () => {

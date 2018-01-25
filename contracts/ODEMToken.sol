@@ -7,7 +7,7 @@ import "zeppelin-solidity/contracts/token/PausableToken.sol";
  * @title ODEM Token contract - ERC20 compatible token contract.
  * @author Gustavo Guimaraes - <gustavo@odem.io>
  */
- 
+
 contract ODEMToken is PausableToken, MintableToken {
     string public constant name = "ODEM Token";
     string public constant symbol = "ODEM";
@@ -20,8 +20,6 @@ contract ODEMToken is PausableToken, MintableToken {
      * @param _value The amount of token to be burned.
      */
     function burn(uint256 _value) public {
-        require(_value > 0);
-
         address burner = msg.sender;
         balances[burner] = balances[burner].sub(_value);
         totalSupply = totalSupply.sub(_value);
