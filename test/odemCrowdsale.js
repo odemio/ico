@@ -1,8 +1,10 @@
 const ODEMCrowdsale = artifacts.require('./ODEMCrowdsale.sol')
 const TeamAndAdvisorsAllocation = artifacts.require('./TeamAndAdvisorsAllocation.sol')
 const ODEMToken = artifacts.require('./ODEMToken.sol')
+const Whitelist = artifacts.require('./Whitelist.sol')
 
 import { should, ensuresException, getBlockNow } from './helpers/utils'
+const expect = require('chai').expect
 import timer from './helpers/timer'
 
 const BigNumber = web3.BigNumber
@@ -16,16 +18,19 @@ contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2, advisor1, advisor2]) =
   const expectedCompanyTokens = new BigNumber(58914286e18)
   const expectedTeamAndAdvisorsAllocation = new BigNumber(14800000e18)
 
-  let startTime, presaleEndTime, endTime
+  let startTime, endTime
   let crowdsale, token
-  let teamAndAdvisorsAllocationsContract
+  let teamAndAdvisorsAllocationsContract, whitelist
 
   const newCrowdsale = rate => {
     startTime = getBlockNow() + 20 // crowdsale starts in 20 seconds
-    presaleEndTime = startTime + dayInSecs * 20 // 20 days
     endTime = startTime + dayInSecs * 60 // 60 days
 
-    return ODEMCrowdsale.new(startTime, presaleEndTime, endTime, rate, wallet)
+    return Whitelist.new().then(whitelistRegistry => {
+      whitelist = whitelistRegistry
+
+      return ODEMCrowdsale.new(startTime, endTime, whitelist.address, rate, wallet)
+    })
   }
 
   beforeEach('initialize contract', async () => {
@@ -47,6 +52,8 @@ contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2, advisor1, advisor2]) =
     crowdsale = await newCrowdsale(newRate)
     token = ODEMToken.at(await crowdsale.token())
 
+    await whitelist.addToWhitelist([buyer, buyer2])
+
     await timer(dayInSecs * 42)
     let finishMinting = await token.mintingFinished()
     finishMinting.should.be.false
@@ -60,9 +67,93 @@ contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2, advisor1, advisor2]) =
     finishMinting.should.be.true
   })
 
-  describe('token purchases plus their bonuses', () => {
+  describe('whitelist', () => {
+    it('only allows owner to add to the whitelist', async () => {
+      await timer(dayInSecs)
+
+      try {
+        await whitelist.addToWhitelist([buyer, buyer2], { from: buyer })
+        assert.fail()
+      } catch (e) {
+        ensuresException(e)
+      }
+
+      let isBuyerWhitelisted = await whitelist.isWhitelisted.call(buyer)
+      isBuyerWhitelisted.should.be.false
+
+      await whitelist.addToWhitelist([buyer, buyer2], { from: owner })
+
+      isBuyerWhitelisted = await whitelist.isWhitelisted.call(buyer)
+      isBuyerWhitelisted.should.be.true
+    })
+
+    it('only allows owner to remove from the whitelist', async () => {
+      await timer(dayInSecs)
+      await whitelist.addToWhitelist([buyer, buyer2], { from: owner })
+
+      try {
+        await whitelist.removeFromWhitelist([buyer], { from: buyer2 })
+        assert.fail()
+      } catch (e) {
+        ensuresException(e)
+      }
+
+      let isBuyerWhitelisted = await whitelist.isWhitelisted.call(buyer2)
+      isBuyerWhitelisted.should.be.true
+
+      await whitelist.removeFromWhitelist([buyer], { from: owner })
+
+      isBuyerWhitelisted = await whitelist.isWhitelisted.call(buyer)
+      isBuyerWhitelisted.should.be.false
+    })
+
+    it('shows whitelist addresses', async () => {
+      await timer(dayInSecs)
+      await whitelist.addToWhitelist([buyer, buyer2], { from: owner })
+
+      const isBuyerWhitelisted = await whitelist.isWhitelisted.call(buyer)
+      const isBuyer2Whitelisted = await whitelist.isWhitelisted.call(buyer2)
+
+      isBuyerWhitelisted.should.be.true
+      isBuyer2Whitelisted.should.be.true
+    })
+
+    it('has WhitelistUpdated event', async () => {
+      await timer(dayInSecs)
+      const { logs } = await whitelist.addToWhitelist([buyer, buyer2], { from: owner })
+
+      const event = logs.find(e => e.event === 'WhitelistUpdated')
+      expect(event).to.exist
+    })
+  })
+
+  describe('token purchases', () => {
+    beforeEach('initialize contract', async () => {
+      await whitelist.addToWhitelist([buyer, buyer2])
+    })
+
+    it('allows ONLY whitelisted addresses to purchase tokens', async () => {
+      await timer(dayInSecs)
+
+      try {
+        await crowdsale.buyTokens(advisor1)
+        assert.fail()
+      } catch (e) {
+        ensuresException(e)
+      }
+
+      const advisorBalance = await token.balanceOf(advisor1)
+      advisorBalance.should.be.bignumber.equal(0)
+
+      // puchase occurence
+      await crowdsale.buyTokens(buyer, { value })
+
+      const buyerBalance = await token.balanceOf(buyer)
+      buyerBalance.should.be.bignumber.equal(50e18)
+    })
+
     it('does NOT buy tokens if crowdsale is paused', async () => {
-      await timer(dayInSecs * 42)
+      await timer(dayInSecs)
       await crowdsale.pause()
       let buyerBalance
 
@@ -83,43 +174,8 @@ contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2, advisor1, advisor2]) =
       buyerBalance.should.be.bignumber.equal(50e18)
     })
 
-    it('has bonus of 20% during the presale', async () => {
-      await timer(50) // within presale period
-      await crowdsale.buyTokens(buyer2, { value })
-
-      const buyerBalance = await token.balanceOf(buyer2)
-      buyerBalance.should.be.bignumber.equal(625e17) // 25% bonus
-    })
-
-    it('stops presale once the presaleCap is reached', async () => {
-      const newRate = new BigNumber(73714286)
-      crowdsale = await newCrowdsale(newRate)
-      token = ODEMToken.at(await crowdsale.token())
-      await timer(50) // within presale period
-
-      await crowdsale.buyTokens(buyer2, { value })
-
-      try {
-        await crowdsale.buyTokens(buyer, { value })
-        assert.fail()
-      } catch (e) {
-        ensuresException(e)
-      }
-
-      const buyerBalance = await token.balanceOf(buyer)
-      buyerBalance.should.be.bignumber.equal(0)
-    })
-
-    it('is also able to buy tokens with bonus by sending ether to the contract directly', async () => {
-      await timer(50)
-      await crowdsale.sendTransaction({ from: buyer, value })
-
-      const purchaserBalance = await token.balanceOf(buyer)
-      purchaserBalance.should.be.bignumber.equal(625e17) // 25% bonus
-    })
-
     it('provides 0% bonus during crowdsale period', async () => {
-      timer(dayInSecs * 42)
+      timer(dayInSecs)
       await crowdsale.buyTokens(buyer2, { value })
 
       const buyerBalance = await token.balanceOf(buyer2)
@@ -191,6 +247,7 @@ contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2, advisor1, advisor2]) =
       crowdsale = await newCrowdsale(newRate)
       token = ODEMToken.at(await crowdsale.token())
 
+      await whitelist.addToWhitelist([buyer])
       await timer(dayInSecs * 42)
 
       await crowdsale.buyTokens(buyer, { value })
@@ -218,6 +275,7 @@ contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2, advisor1, advisor2]) =
 
       await timer(50)
 
+      await whitelist.addToWhitelist([buyer])
       await crowdsale.buyTokens(buyer, { value })
 
       timer(dayInSecs * 70)
