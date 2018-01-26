@@ -12,19 +12,21 @@ import "./Whitelist.sol";
  */
 
 contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
-    uint256 constant public INVESTORS_OWNERS_1_SHARE = 15000000e18;
-    uint256 constant public INVESTORS_OWNERS_2_SHARE = 49000000e18;
-    uint256 constant public COMPANY_SHARE = INVESTORS_OWNERS_1_SHARE.add(INVESTORS_OWNERS_2_SHARE);
+    uint256 constant public BOUNTY_REWARD_SHARE = 43666667e18;
+    uint256 constant public VESTED_TEAM_ADVISORS_SHARE = 38763636e18;
+    uint256 constant public NON_VESTED_TEAM_ADVISORS_SHARE = 5039200e18;
+    uint256 constant public COMPANY_SHARE = 71300194e18;
 
     uint256 constant public PRE_CROWDSALE_CAP = 58200000e18;
-    uint256 constant public TOTAL_TOKENS_BEFORE_CROWDSALE = COMPANY_SHARE.add(PRE_CROWDSALE_CAP);
+    uint256 constant public PUBLIC_CROWDSALE_CAP = 180000000e18;
+    uint256 constant public TOTAL_TOKENS_FOR_CROWDSALE = PRE_CROWDSALE_CAP + PUBLIC_CROWDSALE_CAP;
+    uint256 constant public TOTAL_TOKENS_SUPPLY = 396969697e18;
+    uint256 constant public PERSONAL_FIRST_HOUR_CAP = 2000000e18;
 
-    uint256 constant public TOTAL_TOKENS_CROWDSALE = 180000000e18;
-    uint256 constant public TOTAL_TOKENS_AFTER_CROWDSALE = TOTAL_TOKENS_BEFORE_CROWDSALE.add(TOTAL_TOKENS_CROWDSALE);
+    address public rewardWallet;
+    uint256 public oneHoursAfterStartTime;
 
-    uint256 constant public TEAM_ADVISORS_SHARE = 23800000e18;
-
-    uint256 constant public TOTAL_TOKENS_SUPPLY = 397000000e18;
+    mapping (address => uint256) public trackBuyersPurchases;
 
     // external contracts
     Whitelist public whitelist;
@@ -39,28 +41,27 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
      * @param _whitelist contract containing the whitelisted addresses
      * @param _rate The token rate per ETH
      * @param _wallet Multisig wallet that will hold the crowdsale funds.
-     * @param _wallet2 wallet that will hold tokens from the company share.
-     * @param _wallet3 wallet that will hold tokens from the company share.
+     * @param _rewardWallet wallet that will hold tokens bounty and rewards campaign
      */
     function ODEMCrowdsale
         (
             uint256 _startTime,
             uint256 _endTime,
-            uint256 _whitelist,
+            address _whitelist,
             uint256 _rate,
             address _wallet,
-            address _wallet2,
-            address _wallet3
+            address _rewardWallet
         )
         public
         FinalizableCrowdsale()
         Crowdsale(_startTime, _endTime, _rate, _wallet)
     {
 
+        require(_whitelist != address(0) && _wallet != address(0) && _rewardWallet != address(0));
         whitelist = Whitelist(_whitelist);
+        rewardWallet = _rewardWallet;
+        oneHoursAfterStartTime = startTime.add(60*2);
 
-        token.mint(_wallet2, INVESTORS_OWNERS_1_SHARE);
-        token.mint(_wallet3, INVESTORS_OWNERS_2_SHARE);
         ODEMToken(token).pause();
     }
 
@@ -82,7 +83,6 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
      * @dev Mint tokens for private investors before crowdsale starts
      * @param investorsAddress Purchaser's address
      * @param rate Rate of the purchase
-     * @param bonus Number that represents the bonus
      * @param weiAmount Amount that the investors sent during the private sale period
      */
     function mintTokenForPreCrowdsale(address investorsAddress, uint256 rate, uint256 weiAmount)
@@ -90,7 +90,7 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
         onlyOwner
     {
         require(now < startTime);
-        require(token.totalSupply() <= TOTAL_TOKENS_BEFORE_CROWDSALE);
+        require(token.totalSupply() <= PRE_CROWDSALE_CAP);
 
         uint256 tokens = rate.mul(weiAmount);
 
@@ -109,27 +109,31 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
         payable
     {
         require(beneficiary != address(0));
-        require(validPurchase() && token.totalSupply() <= TOTAL_TOKENS_AFTER_CROWDSALE);
+        require(msg.sender == beneficiary);
+        require(validPurchase() && token.totalSupply() <= TOTAL_TOKENS_FOR_CROWDSALE);
 
         uint256 weiAmount = msg.value;
 
         // calculate token amount to be created
         uint256 tokens = weiAmount.mul(rate);
 
+        checkWithinFirstHourRestriction(tokens);
+
         // update state
         weiRaised = weiRaised.add(weiAmount);
 
         //remainder logic
-        if (tokens.add(token.tokenSupply()) > TOTAL_TOKENS_AFTER_CROWDSALE) {
-            uint256 tokenDifference = token.tokenSupply().sub(TOTAL_TOKENS_AFTER_CROWDSALE);
-            tokens = TOTAL_SUPPLY_CROWDSALE.sub(token.tokenSupply());
+        if (token.totalSupply().add(tokens) > TOTAL_TOKENS_FOR_CROWDSALE) {
+            uint256 tokenDifference = token.totalSupply().sub(TOTAL_TOKENS_FOR_CROWDSALE);
+            tokens = TOTAL_TOKENS_FOR_CROWDSALE.sub(token.totalSupply());
             uint256 weiAmountToReturn = tokenDifference.div(rate);
 
             weiRaised.sub(weiAmount);
-            msg.sender.tranfer(weiAmountToReturn);
+            msg.sender.transfer(weiAmountToReturn);
         }
 
         token.mint(beneficiary, tokens);
+
 
         TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
 
@@ -139,7 +143,7 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     // overriding Crowdsale#hasEnded to add cap logic
     // @return true if crowdsale event has ended
     function hasEnded() public view returns (bool) {
-        if (token.totalSupply() == TOTAL_TOKENS_AFTER_CROWDSALE) {
+        if (token.totalSupply() == TOTAL_TOKENS_FOR_CROWDSALE) {
             return true;
         }
 
@@ -154,15 +158,32 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     }
 
     /**
+     * @dev checks whether personal token purchase cap has been reached within crowdsale first hour
+     * @param tokens calculated total tokens buyer would have from purchase
+     */
+    function checkWithinFirstHourRestriction(uint256 tokens) internal view {
+        if (now < oneHoursAfterStartTime && trackBuyersPurchases[msg.sender].add(tokens) > PERSONAL_FIRST_HOUR_CAP) {
+            revert();
+        }
+    }
+
+    /**
      * @dev finalizes crowdsale
      */
     function finalization() internal {
         teamAndAdvisorsAllocation = new TeamAndAdvisorsAllocation(owner, token);
-        token.mint(teamAndAdvisorsAllocation, TEAM_ADVISORS_SHARE);
 
-        uint256 remainingTokens = TOTAL_TOKENS_SUPPLY.sub(token.totalSupply());
+        // final minting
+        token.mint(teamAndAdvisorsAllocation, VESTED_TEAM_ADVISORS_SHARE);
+        token.mint(wallet, NON_VESTED_TEAM_ADVISORS_SHARE);
+        token.mint(wallet, COMPANY_SHARE);
+        token.mint(rewardWallet, BOUNTY_REWARD_SHARE);
 
-        token.mint(wallet, remainingTokens);
+        if (TOTAL_TOKENS_SUPPLY > token.totalSupply()) {
+            uint256 remainingTokens = TOTAL_TOKENS_SUPPLY.sub(token.totalSupply());
+
+            token.mint(wallet, remainingTokens);
+        }
 
         token.finishMinting();
         ODEMToken(token).unpause();

@@ -8,7 +8,7 @@ const startTime = web3.eth.getBlock(web3.eth.blockNumber).timestamp + 80
 const endTime = startTime + (dayInSecs * 60) // 60 days
 const rate = new BigNumber(500)
 
-module.exports = function(deployer, network, [_, wallet]) {
+module.exports = function(deployer, network, [_, wallet, rewardWallet]) {
   if(network == 'rinkeby' || network == 'testnet') {
     return deployer
       .then(() => {
@@ -21,7 +21,8 @@ module.exports = function(deployer, network, [_, wallet]) {
               endTime,
               Whitelist.address,
               rate,
-              wallet
+              wallet,
+              rewardWallet
           );
       })
     } else {
@@ -38,7 +39,8 @@ module.exports = function(deployer, network, [_, wallet]) {
                 endTime,
                 Whitelist.address,
                 rate,
-                wallet
+                wallet,
+                rewardWallet
             );
         })
     }

@@ -9,7 +9,7 @@ import timer from './helpers/timer'
 
 const BigNumber = web3.BigNumber
 
-contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2, advisor1, advisor2]) => {
+contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1, advisor2]) => {
   const rate = new BigNumber(50)
   const newRate = new BigNumber(245714286)
   const dayInSecs = 86400
@@ -29,7 +29,7 @@ contract('ODEMCrowdsale', ([owner, wallet, buyer, buyer2, advisor1, advisor2]) =
     return Whitelist.new().then(whitelistRegistry => {
       whitelist = whitelistRegistry
 
-      return ODEMCrowdsale.new(startTime, endTime, whitelist.address, rate, wallet)
+      return ODEMCrowdsale.new(startTime, endTime, whitelist.address, rate, wallet, rewardWallet)
     })
   }
 
