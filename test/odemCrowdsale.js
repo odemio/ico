@@ -11,12 +11,16 @@ const BigNumber = web3.BigNumber
 
 contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1, advisor2]) => {
   const rate = new BigNumber(50)
-  const newRate = new BigNumber(245714286)
+  const newRate = new BigNumber(60)
   const dayInSecs = 86400
-  const value = new BigNumber(1e18)
+  const value = new BigNumber(1)
 
-  const expectedCompanyTokens = new BigNumber(58914286e18)
-  const expectedTeamAndAdvisorsAllocation = new BigNumber(14800000e18)
+  const expectedBountyTokens = new BigNumber(43666667e18)
+
+  const expectedTeamAndAdvisorsAllocation = new BigNumber(38763636e18)
+  const totalTokensForCrowdsale = new BigNumber(238200000)
+  const personalCrowdsaleCap = new BigNumber(2000000)
+  const totalTokenSupply = new BigNumber(396969697)
 
   let startTime, endTime
   let crowdsale, token
@@ -43,28 +47,117 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
     crowdsaleRate.toNumber().should.equal(rate.toNumber())
   })
 
-  it('starts with token paused', async () => {
-    const paused = await token.paused()
-    paused.should.equal(true)
+  it('has a whitelist contract', async () => {
+    const whitelistContract = await crowdsale.whitelist()
+    whitelistContract.should.equal(whitelist.address)
   })
 
-  it('finishes minting when crowdsale is finalized', async function() {
-    crowdsale = await newCrowdsale(newRate)
-    token = ODEMToken.at(await crowdsale.token())
+  it('has a wallet', async () => {
+    const walletAddress = await crowdsale.wallet()
+    walletAddress.should.equal(wallet)
+  })
 
-    await whitelist.addToWhitelist([buyer, buyer2])
+  it('has a reward wallet', async () => {
+    const rewardWalletAddress = await crowdsale.rewardWallet()
+    rewardWalletAddress.should.equal(rewardWallet)
+  })
 
-    await timer(dayInSecs * 42)
-    let finishMinting = await token.mintingFinished()
-    finishMinting.should.be.false
+  it('sets oneHourAfterStartTime timestamp', async () => {
+    const contractStartTime = await crowdsale.startTime()
+    const oneHourAfterStartTime = await crowdsale.oneHourAfterStartTime()
 
-    await crowdsale.buyTokens(buyer, { value })
+    oneHourAfterStartTime.toNumber().should.equal(contractStartTime.toNumber() + 3600)
+  })
 
-    await timer(dayInSecs * 20)
-    await crowdsale.finalize()
+  it('starts with token paused', async () => {
+    const paused = await token.paused()
+    paused.should.be.true
+  })
 
-    finishMinting = await token.mintingFinished()
-    finishMinting.should.be.true
+  describe('changing rate', () => {
+    it('does NOT allows anyone to change rate other than the owner', async () => {
+      try {
+        await crowdsale.setRate(newRate, { from: buyer })
+        assert.fail()
+      } catch (e) {
+        ensuresException(e)
+      }
+
+      const rate = await crowdsale.rate()
+      rate.should.be.bignumber.equal(rate)
+    })
+
+    it('cannot set a rate that is zero', async () => {
+      const zeroRate = new BigNumber(0)
+
+      try {
+        await crowdsale.setRate(zeroRate, { from: owner })
+        assert.fail()
+      } catch (e) {
+        ensuresException(e)
+      }
+
+      const rate = await crowdsale.rate()
+      rate.should.be.bignumber.equal(rate)
+    })
+
+    it('allows owner to change rate', async () => {
+      await crowdsale.setRate(newRate, { from: owner })
+
+      const rate = await crowdsale.rate()
+      rate.should.be.bignumber.equal(newRate)
+    })
+  })
+
+  describe('#mintTokenForPreCrowdsale', function () {
+    it('must NOT be called by a non owner', async () => {
+      try {
+        await crowdsale.mintTokenForPreCrowdsale(buyer, 10e18, { from: buyer })
+        assert.fail()
+      } catch (e) {
+        ensuresException(e)
+      }
+
+      const buyerBalance = await token.balanceOf(buyer)
+      buyerBalance.should.be.bignumber.equal(0)
+    })
+
+    it('should NOT mint tokens when pre crowdsale cap is reached', async () => {
+      const preCrowdsaleCap = await crowdsale.PRE_CROWDSALE_CAP()
+
+      try {
+        await crowdsale.mintTokenForPreCrowdsale(buyer, preCrowdsaleCap.toNumber() + 10e18)
+        assert.fail()
+      } catch (e) {
+        ensuresException(e)
+      }
+
+      const buyerBalance = await token.balanceOf(buyer)
+      buyerBalance.should.be.bignumber.equal(0)
+    })
+
+    it('should NOT mint tokens for private investors after crowdsale starts', async () => {
+      await timer(50)
+      try {
+        await crowdsale.mintTokenForPreCrowdsale(buyer, value)
+        assert.fail()
+      } catch (e) {
+        ensuresException(e)
+      }
+
+      const buyerBalance = await token.balanceOf(buyer)
+      buyerBalance.should.be.bignumber.equal(0)
+    })
+
+    it('mints tokens to private investors before the crowdsale starts', async () => {
+      const { logs } = await crowdsale.mintTokenForPreCrowdsale(buyer, value)
+
+      const buyerBalance = await token.balanceOf(buyer)
+      buyerBalance.should.be.bignumber.equal(value)
+
+      const event = logs.find(e => e.event === 'PrivateInvestorTokenPurchase')
+      should.exist(event)
+    })
   })
 
   describe('whitelist', () => {
@@ -136,7 +229,7 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
       await timer(dayInSecs)
 
       try {
-        await crowdsale.buyTokens(advisor1)
+        await crowdsale.buyTokens(advisor1, { from: advisor1 })
         assert.fail()
       } catch (e) {
         ensuresException(e)
@@ -146,10 +239,30 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
       advisorBalance.should.be.bignumber.equal(0)
 
       // puchase occurence
-      await crowdsale.buyTokens(buyer, { value })
+      await crowdsale.buyTokens(buyer, { value, from: buyer })
 
       const buyerBalance = await token.balanceOf(buyer)
-      buyerBalance.should.be.bignumber.equal(50e18)
+      buyerBalance.should.be.bignumber.equal(50)
+    })
+
+    it('allows ONLY addresses that call buyTokens to purchase tokens', async () => {
+      await timer(dayInSecs)
+
+      try {
+        await crowdsale.buyTokens(buyer, { from: owner })
+        assert.fail()
+      } catch (e) {
+        ensuresException(e)
+      }
+
+      const advisorBalance = await token.balanceOf(advisor1)
+      advisorBalance.should.be.bignumber.equal(0)
+
+      // puchase occurence
+      await crowdsale.buyTokens(buyer, { value, from: buyer })
+
+      const buyerBalance = await token.balanceOf(buyer)
+      buyerBalance.should.be.bignumber.equal(50)
     })
 
     it('does NOT buy tokens if crowdsale is paused', async () => {
@@ -158,7 +271,7 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
       let buyerBalance
 
       try {
-        await crowdsale.buyTokens(buyer, { value })
+        await crowdsale.buyTokens(buyer, { value, from: buyer })
         assert.fail()
       } catch (e) {
         ensuresException(e)
@@ -168,77 +281,84 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
       buyerBalance.should.be.bignumber.equal(0)
 
       await crowdsale.unpause()
-      await crowdsale.buyTokens(buyer, { value })
+      await crowdsale.buyTokens(buyer, { value, from: buyer })
 
       buyerBalance = await token.balanceOf(buyer)
-      buyerBalance.should.be.bignumber.equal(50e18)
+      buyerBalance.should.be.bignumber.equal(50)
     })
 
-    it('provides 0% bonus during crowdsale period', async () => {
+    it('only mints tokens up to crowdsale cap and when more eth is sent last user purchase info is saved in contract', async () => {
+      crowdsale = await newCrowdsale(totalTokensForCrowdsale)
+      token = ODEMToken.at(await crowdsale.token())
+
+      await whitelist.addToWhitelist([buyer, buyer2])
+
+      await timer(dayInSecs)
+
+      await crowdsale.buyTokens(buyer, { from: buyer, value: 2e18 })
+
+      const buyerBalance = await token.balanceOf(buyer)
+      buyerBalance.should.be.bignumber.equal(238200000e18)
+
+      const remainderPurchaser = await crowdsale.remainderPurchaser()
+      remainderPurchaser.should.equal(buyer)
+
+      const remainder = await crowdsale.remainderAmount()
+      remainder.toNumber().should.be.equal(1e18)
+
+      try {
+        await crowdsale.buyTokens(buyer, { value, from: buyer })
+        assert.fail()
+      } catch (e) {
+        ensuresException(e)
+      }
+    })
+
+    it('does not allow purchase when buyer goes over personal crowdsale cap during the first hour of crowdsale', async () => {
+      crowdsale = await newCrowdsale(personalCrowdsaleCap)
+      token = ODEMToken.at(await crowdsale.token())
+
+      await whitelist.addToWhitelist([buyer, buyer2])
+      timer(300) // 5 minutes within crowdsale
+
+      try {
+        await crowdsale.buyTokens(buyer, { value: value + 1e18, from: buyer })
+        assert.fail()
+      } catch (e) {
+        ensuresException(e)
+      }
+
+      let buyerBalance = await token.balanceOf(buyer)
+      buyerBalance.should.be.bignumber.equal(0)
+
+      // accepts when it is within cap
+      await crowdsale.buyTokens(buyer, { value, from: buyer })
+
+      await crowdsale.buyTokens(buyer2, { value, from: buyer2 })
+
+      buyerBalance = await token.balanceOf(buyer)
+      const buyer2Balance = await token.balanceOf(buyer2)
+
+      buyerBalance.should.be.bignumber.equal(2000000)
+      buyer2Balance.should.be.bignumber.equal(2000000)
+    })
+
+    it('allows purchases during normal crowdsale period even if it above personal cap', async () => {
+      crowdsale = await newCrowdsale(personalCrowdsaleCap)
+      token = ODEMToken.at(await crowdsale.token())
+
+      await whitelist.addToWhitelist([buyer, buyer2])
       timer(dayInSecs)
-      await crowdsale.buyTokens(buyer2, { value })
 
-      const buyerBalance = await token.balanceOf(buyer2)
-      buyerBalance.should.be.bignumber.equal(50e18) // 0% bonus
-    })
-  })
+      await crowdsale.buyTokens(buyer2, { value: value + 1, from: buyer2 })
 
-  describe('#mintTokenForPreCrowdsale', function () {
-    it('mints tokens for private investors after crowdsale has started', async () => {
-      timer(50)
+      const buyer2Balance = await token.balanceOf(buyer2)
+      buyer2Balance.should.be.bignumber.equal(22000000)
 
-      await crowdsale.mintTokenForPreCrowdsale(buyer, rate, 0, value)
+      await crowdsale.buyTokens(buyer, { value, from: buyer })
 
       const buyerBalance = await token.balanceOf(buyer)
-      buyerBalance.should.be.bignumber.equal(50e18)
-    })
-
-    it('mints tokens to private investors before the crowdsale starts', async () => {
-      const { logs } = await crowdsale.mintTokenForPreCrowdsale(buyer, rate, 0, value)
-
-      const buyerBalance = await token.balanceOf(buyer)
-      buyerBalance.should.be.bignumber.equal(50e18)
-
-      const event = logs.find(e => e.event === 'PrivateInvestorTokenPurchase')
-      should.exist(event)
-    })
-  })
-
-  describe('change rate', () => {
-    it('does NOT allows anyone to change rate other than the owner', async () => {
-      const newRate = new BigNumber(60)
-
-      try {
-        await crowdsale.setRate(newRate, { from: buyer })
-        assert.fail()
-      } catch (e) {
-        ensuresException(e)
-      }
-
-      const rate = await crowdsale.rate()
-      rate.should.be.bignumber.equal(rate)
-    })
-
-    it('cannot set a rate that is zero', async () => {
-      const zeroRate = new BigNumber(0)
-
-      try {
-        await crowdsale.setRate(zeroRate, { from: owner })
-        assert.fail()
-      } catch (e) {
-        ensuresException(e)
-      }
-
-      const rate = await crowdsale.rate()
-      rate.should.be.bignumber.equal(rate)
-    })
-
-    it('allows owner to change rate', async () => {
-      const newRate = new BigNumber(60)
-      await crowdsale.setRate(newRate, { from: owner })
-
-      const rate = await crowdsale.rate()
-      rate.should.be.bignumber.equal(newRate)
+      buyerBalance.should.be.bignumber.equal(2000000)
     })
   })
 
@@ -250,7 +370,7 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
       await whitelist.addToWhitelist([buyer])
       await timer(dayInSecs * 42)
 
-      await crowdsale.buyTokens(buyer, { value })
+      await crowdsale.buyTokens(buyer, { value, from: buyer })
 
       await timer(dayInSecs * 20)
       await crowdsale.finalize()
@@ -258,13 +378,38 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
 
     it('assigns tokens correctly to company', async function() {
       const balanceCompany = await token.balanceOf(wallet)
+      // nonVestedTokens + companyTokens + leftOver tokens
+      balanceCompany.toNumber().should.be.approximately(3.14539394e26, 1e18)
+    })
 
-      balanceCompany.should.be.bignumber.equal(expectedCompanyTokens)
+    it('assigns tokens correctly to bounty', async function() {
+      const balanceRewardWallet = await token.balanceOf(rewardWallet)
+
+      balanceRewardWallet.should.be.bignumber.equal(expectedBountyTokens)
     })
 
     it('token is unpaused after crowdsale ends', async function() {
       let paused = await token.paused()
       paused.should.be.false
+    })
+
+    it('finishes minting when crowdsale is finalized', async function() {
+      crowdsale = await newCrowdsale(newRate)
+      token = ODEMToken.at(await crowdsale.token())
+
+      await whitelist.addToWhitelist([buyer, buyer2])
+
+      await timer(dayInSecs * 42)
+      let finishMinting = await token.mintingFinished()
+      finishMinting.should.be.false
+
+      await crowdsale.buyTokens(buyer, { value, from: buyer })
+
+      await timer(dayInSecs * 20)
+      await crowdsale.finalize()
+
+      finishMinting = await token.mintingFinished()
+      finishMinting.should.be.true
     })
   })
 
@@ -276,7 +421,7 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
       await timer(50)
 
       await whitelist.addToWhitelist([buyer])
-      await crowdsale.buyTokens(buyer, { value })
+      await crowdsale.buyTokens(buyer, { value, from: buyer })
 
       timer(dayInSecs * 70)
       await crowdsale.finalize()

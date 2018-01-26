@@ -24,7 +24,12 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     uint256 constant public PERSONAL_FIRST_HOUR_CAP = 2000000e18;
 
     address public rewardWallet;
-    uint256 public oneHoursAfterStartTime;
+    uint256 public oneHourAfterStartTime;
+
+    // remainderPurchaser and remainderTokens info saved in the contract
+    // used for reference for contract owner to send refund if any to last purchaser after end of crowdsale
+    address public remainderPurchaser;
+    uint256 public remainderAmount;
 
     mapping (address => uint256) public trackBuyersPurchases;
 
@@ -32,7 +37,7 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     Whitelist public whitelist;
     TeamAndAdvisorsAllocation public teamAndAdvisorsAllocation;
 
-    event PrivateInvestorTokenPurchase(address indexed investor, uint256 rate, uint weiAmount);
+    event PrivateInvestorTokenPurchase(address indexed investor, uint256 tokensPurchased);
 
     /**
      * @dev Contract constructor function
@@ -60,7 +65,7 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
         require(_whitelist != address(0) && _wallet != address(0) && _rewardWallet != address(0));
         whitelist = Whitelist(_whitelist);
         rewardWallet = _rewardWallet;
-        oneHoursAfterStartTime = startTime.add(60*2);
+        oneHourAfterStartTime = startTime.add(60*60);
 
         ODEMToken(token).pause();
     }
@@ -80,22 +85,19 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     }
 
     /**
-     * @dev Mint tokens for private investors before crowdsale starts
+     * @dev Mint tokens for pre crowdsale putchases before crowdsale starts
      * @param investorsAddress Purchaser's address
-     * @param rate Rate of the purchase
-     * @param weiAmount Amount that the investors sent during the private sale period
+     * @param tokensPurchased Tokens purchased during pre crowdsale
      */
-    function mintTokenForPreCrowdsale(address investorsAddress, uint256 rate, uint256 weiAmount)
+    function mintTokenForPreCrowdsale(address investorsAddress, uint256 tokensPurchased)
         external
         onlyOwner
     {
         require(now < startTime);
-        require(token.totalSupply() <= PRE_CROWDSALE_CAP);
+        require(token.totalSupply().add(tokensPurchased) <= PRE_CROWDSALE_CAP);
 
-        uint256 tokens = rate.mul(weiAmount);
-
-        token.mint(investorsAddress, tokens);
-        PrivateInvestorTokenPurchase(investorsAddress, rate, weiAmount);
+        token.mint(investorsAddress, tokensPurchased);
+        PrivateInvestorTokenPurchase(investorsAddress, tokensPurchased);
     }
 
     /**
@@ -110,7 +112,7 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     {
         require(beneficiary != address(0));
         require(msg.sender == beneficiary);
-        require(validPurchase() && token.totalSupply() <= TOTAL_TOKENS_FOR_CROWDSALE);
+        require(validPurchase() && token.totalSupply() < TOTAL_TOKENS_FOR_CROWDSALE);
 
         uint256 weiAmount = msg.value;
 
@@ -119,21 +121,25 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
 
         checkWithinFirstHourRestriction(tokens);
 
+        trackBuyersPurchases[beneficiary] = trackBuyersPurchases[beneficiary].add(tokens);
+
         // update state
         weiRaised = weiRaised.add(weiAmount);
 
         //remainder logic
         if (token.totalSupply().add(tokens) > TOTAL_TOKENS_FOR_CROWDSALE) {
-            uint256 tokenDifference = token.totalSupply().sub(TOTAL_TOKENS_FOR_CROWDSALE);
-            tokens = TOTAL_TOKENS_FOR_CROWDSALE.sub(token.totalSupply());
+            uint256 tokenDifference = token.totalSupply().add(tokens).sub(TOTAL_TOKENS_FOR_CROWDSALE);
             uint256 weiAmountToReturn = tokenDifference.div(rate);
+            tokens = TOTAL_TOKENS_FOR_CROWDSALE.sub(token.totalSupply());
 
-            weiRaised.sub(weiAmount);
-            msg.sender.transfer(weiAmountToReturn);
+            weiRaised = weiRaised.sub(weiAmount);
+
+            // save info so as to refund purchaser after crowdsale's end
+            remainderPurchaser = msg.sender;
+            remainderAmount = weiAmountToReturn;
         }
 
         token.mint(beneficiary, tokens);
-
 
         TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
 
@@ -162,7 +168,7 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
      * @param tokens calculated total tokens buyer would have from purchase
      */
     function checkWithinFirstHourRestriction(uint256 tokens) internal view {
-        if (now < oneHoursAfterStartTime && trackBuyersPurchases[msg.sender].add(tokens) > PERSONAL_FIRST_HOUR_CAP) {
+        if (now < oneHourAfterStartTime && trackBuyersPurchases[msg.sender].add(tokens) > PERSONAL_FIRST_HOUR_CAP) {
             revert();
         }
     }
