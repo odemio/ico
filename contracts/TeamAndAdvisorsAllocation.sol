@@ -15,7 +15,7 @@ contract TeamAndAdvisorsAllocation {
     uint256 public canSelfDestruct;
     uint256 public tokensCreated;
     uint256 public allocatedTokens;
-    uint256 private totalTeamAndAdvisorsAllocation = 38763636e18;
+    uint256 private totalTeamAndAdvisorsAllocation = 38763636e18; // 38 mm
 
     mapping (address => uint256) public teamAndAdvisorsAllocations;
 

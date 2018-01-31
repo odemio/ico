@@ -12,16 +12,16 @@ import "./Whitelist.sol";
  */
 
 contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
-    uint256 constant public BOUNTY_REWARD_SHARE = 43666667e18;
-    uint256 constant public VESTED_TEAM_ADVISORS_SHARE = 38763636e18;
-    uint256 constant public NON_VESTED_TEAM_ADVISORS_SHARE = 5039200e18;
-    uint256 constant public COMPANY_SHARE = 71300194e18;
+    uint256 constant public BOUNTY_REWARD_SHARE =           43666667e18; // 43 mm
+    uint256 constant public VESTED_TEAM_ADVISORS_SHARE =    38763636e18; // 38 mm
+    uint256 constant public NON_VESTED_TEAM_ADVISORS_SHARE = 5039200e18; //  5 mm
+    uint256 constant public COMPANY_SHARE =                 71300194e18; // 71 mm
 
-    uint256 constant public PRE_CROWDSALE_CAP = 58200000e18;
-    uint256 constant public PUBLIC_CROWDSALE_CAP = 180000000e18;
+    uint256 constant public PRE_CROWDSALE_CAP =      58200000e18; //  58 mm
+    uint256 constant public PUBLIC_CROWDSALE_CAP =  180000000e18; // 180 mm
     uint256 constant public TOTAL_TOKENS_FOR_CROWDSALE = PRE_CROWDSALE_CAP + PUBLIC_CROWDSALE_CAP;
-    uint256 constant public TOTAL_TOKENS_SUPPLY = 396969697e18;
-    uint256 constant public PERSONAL_FIRST_HOUR_CAP = 2000000e18;
+    uint256 constant public TOTAL_TOKENS_SUPPLY =   396969697e18; // 396 mm
+    uint256 constant public PERSONAL_FIRST_HOUR_CAP = 2000000e18; //   2 mm
 
     address public rewardWallet;
     uint256 public oneHourAfterStartTime;
