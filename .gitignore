@@ -1,4 +1,6 @@
 build/
 node_modules/
 yarn-error.log
+package-lock.json
+
 .specifications
