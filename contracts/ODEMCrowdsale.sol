@@ -132,10 +132,13 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
         //remainder logic
         if (token.totalSupply().add(tokens) > TOTAL_TOKENS_FOR_CROWDSALE) {
             uint256 tokenDifference = token.totalSupply().add(tokens).sub(TOTAL_TOKENS_FOR_CROWDSALE);
-            uint256 weiAmountToReturn = tokenDifference.div(rate);
+            uint256 maxPossibleInvestment = tokenDifference.div(rate);
+            uint256 weiAmountToReturn = weiAmount.sub(maxPossibleInvestment);
+
             tokens = TOTAL_TOKENS_FOR_CROWDSALE.sub(token.totalSupply());
 
             weiRaised = weiRaised.sub(weiAmountToReturn);
+            weiAmount = maxPossibleInvestment;
 
             // save info so as to refund purchaser after crowdsale's end
             remainderPurchaser = msg.sender;
