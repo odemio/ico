@@ -38,6 +38,7 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     TeamAndAdvisorsAllocation public teamAndAdvisorsAllocation;
 
     event PrivateInvestorTokenPurchase(address indexed investor, uint256 tokensPurchased);
+    event TokenRateChanged(uint256 previousRate, uint256 newRate);
 
     /**
      * @dev Contract constructor function
@@ -81,6 +82,8 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
      */
     function setRate(uint256 newRate) external onlyOwner {
         require(newRate != 0);
+
+        TokenRateChanged(rate, newRate);
         rate = newRate;
     }
 
@@ -93,7 +96,7 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
         external
         onlyOwner
     {
-        require(now < startTime);
+        require(now < startTime && investorsAddress != address(0));
         require(token.totalSupply().add(tokensPurchased) <= PRE_CROWDSALE_CAP);
 
         token.mint(investorsAddress, tokensPurchased);
@@ -132,7 +135,7 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
             uint256 weiAmountToReturn = tokenDifference.div(rate);
             tokens = TOTAL_TOKENS_FOR_CROWDSALE.sub(token.totalSupply());
 
-            weiRaised = weiRaised.sub(weiAmount);
+            weiRaised = weiRaised.sub(weiAmountToReturn);
 
             // save info so as to refund purchaser after crowdsale's end
             remainderPurchaser = msg.sender;

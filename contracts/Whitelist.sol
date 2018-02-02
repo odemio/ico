@@ -21,7 +21,7 @@ contract Whitelist is Ownable {
         }
     }
 
-    function isWhitelisted(address _address) public constant returns (bool) {
+    function isWhitelisted(address _address) public view returns (bool) {
         return allowedAddresses[_address];
     }
 }
