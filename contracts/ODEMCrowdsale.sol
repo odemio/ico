@@ -24,6 +24,7 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     uint256 constant public PERSONAL_FIRST_HOUR_CAP = 2000000e18; //   2 mm
 
     address public rewardWallet;
+    address public teamAndAdvisorsAllocation;
     uint256 public oneHourAfterStartTime;
 
     // remainderPurchaser and remainderTokens info saved in the contract
@@ -35,7 +36,6 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
 
     // external contracts
     Whitelist public whitelist;
-    TeamAndAdvisorsAllocation public teamAndAdvisorsAllocation;
 
     event PrivateInvestorTokenPurchase(address indexed investor, uint256 tokensPurchased);
     event TokenRateChanged(uint256 previousRate, uint256 newRate);
@@ -66,7 +66,7 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
         require(_whitelist != address(0) && _wallet != address(0) && _rewardWallet != address(0));
         whitelist = Whitelist(_whitelist);
         rewardWallet = _rewardWallet;
-        oneHourAfterStartTime = startTime.add(60*60);
+        oneHourAfterStartTime = startTime.add(1 hours);
 
         ODEMToken(token).pause();
     }
@@ -122,7 +122,9 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
         // calculate token amount to be created
         uint256 tokens = weiAmount.mul(rate);
 
-        checkWithinFirstHourRestriction(tokens);
+        // checks whether personal token purchase cap has been reached within crowdsale first hour
+        if (now < oneHourAfterStartTime)
+            require(trackBuyersPurchases[msg.sender].add(tokens) <= PERSONAL_FIRST_HOUR_CAP);
 
         trackBuyersPurchases[beneficiary] = trackBuyersPurchases[beneficiary].add(tokens);
 
@@ -163,20 +165,20 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     }
 
     /**
-     * @dev checks whether personal token purchase cap has been reached within crowdsale first hour
-     * @param tokens calculated total tokens buyer would have from purchase
+     * @dev Set the address which should receive the vested team tokens share on finalization
+     * @param _teamAndAdvisorsAllocation address of team and advisor allocation contract
      */
-    function checkWithinFirstHourRestriction(uint256 tokens) internal view {
-        if (now < oneHourAfterStartTime && trackBuyersPurchases[msg.sender].add(tokens) > PERSONAL_FIRST_HOUR_CAP) {
-            revert();
-        }
+    function setTeamWalletAddress(address _teamAndAdvisorsAllocation) public {
+        require(_teamAndAdvisorsAllocation != address(0x0));
+        teamAndAdvisorsAllocation = _teamAndAdvisorsAllocation;
     }
 
     /**
      * @dev finalizes crowdsale
      */
     function finalization() internal {
-        teamAndAdvisorsAllocation = new TeamAndAdvisorsAllocation(owner, token);
+        // This must have been set manually prior to finalize().
+        require(teamAndAdvisorsAllocation != address(0x0));
 
         // final minting
         token.mint(teamAndAdvisorsAllocation, VESTED_TEAM_ADVISORS_SHARE);

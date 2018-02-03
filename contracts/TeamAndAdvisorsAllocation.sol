@@ -8,9 +8,9 @@ import 'zeppelin-solidity/contracts/math/SafeMath.sol';
  * @author Gustavo Guimaraes - <gustavo@odem.io>
  */
 
-contract TeamAndAdvisorsAllocation {
+contract TeamAndAdvisorsAllocation is Ownable {
     using SafeMath for uint;
-    address public owner;
+
     uint256 public unlockedAt;
     uint256 public canSelfDestruct;
     uint256 public tokensCreated;
@@ -22,23 +22,13 @@ contract TeamAndAdvisorsAllocation {
     ODEMToken public odem;
 
     /**
-     * @dev Throws if called by any account other than the owner.
-     */
-    modifier onlyOwner() {
-        require(msg.sender == owner);
-        _;
-    }
-
-    /**
      * @dev constructor function that sets owner and token for the TeamAndAdvisorsAllocation contract
-     * @param _owner Contract owner
      * @param token Token contract address for ODEMToken
      */
-    function TeamAndAdvisorsAllocation(address _owner, address token) public {
+    function TeamAndAdvisorsAllocation(address token) public {
         odem = ODEMToken(token);
         unlockedAt = now.add(182 days);
         canSelfDestruct = now.add(365 days);
-        owner = _owner;
     }
 
     /**
