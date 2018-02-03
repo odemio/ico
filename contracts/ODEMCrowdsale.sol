@@ -168,7 +168,7 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
      * @dev Set the address which should receive the vested team tokens share on finalization
      * @param _teamAndAdvisorsAllocation address of team and advisor allocation contract
      */
-    function setTeamWalletAddress(address _teamAndAdvisorsAllocation) public {
+    function setTeamWalletAddress(address _teamAndAdvisorsAllocation) public onlyOwner {
         require(_teamAndAdvisorsAllocation != address(0x0));
         teamAndAdvisorsAllocation = _teamAndAdvisorsAllocation;
     }
