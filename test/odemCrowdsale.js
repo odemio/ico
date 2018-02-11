@@ -40,6 +40,7 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
   beforeEach('initialize contract', async () => {
     crowdsale = await newCrowdsale(rate)
     token = ODEMToken.at(await crowdsale.token())
+    teamAndAdvisorsAllocationsContract = await TeamAndAdvisorsAllocation.new(token.address)
   })
 
   it('has a normal crowdsale rate', async () => {
@@ -376,6 +377,9 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
       await crowdsale.buyTokens(buyer, { value, from: buyer })
 
       await timer(dayInSecs * 20)
+
+      await crowdsale.setTeamWalletAddress(teamAndAdvisorsAllocationsContract.address)
+
       await crowdsale.finalize()
     })
 
@@ -409,6 +413,7 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
       await crowdsale.buyTokens(buyer, { value, from: buyer })
 
       await timer(dayInSecs * 20)
+      await crowdsale.setTeamWalletAddress(teamAndAdvisorsAllocationsContract.address)
       await crowdsale.finalize()
 
       finishMinting = await token.mintingFinished()
@@ -420,6 +425,7 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
     beforeEach(async function() {
       crowdsale = await newCrowdsale(newRate)
       token = ODEMToken.at(await crowdsale.token())
+      teamAndAdvisorsAllocationsContract = await TeamAndAdvisorsAllocation.new(await crowdsale.token())
 
       await timer(50)
 
@@ -427,10 +433,8 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
       await crowdsale.buyTokens(buyer, { value, from: buyer })
 
       timer(dayInSecs * 70)
+      await crowdsale.setTeamWalletAddress(teamAndAdvisorsAllocationsContract.address)
       await crowdsale.finalize()
-
-      const teamAndAdvisorsAllocations = await crowdsale.teamAndAdvisorsAllocation()
-      teamAndAdvisorsAllocationsContract = TeamAndAdvisorsAllocation.at(teamAndAdvisorsAllocations)
     })
 
     it('assigns tokens correctly to TeamAndAdvisorsAllocation contract', async function() {
@@ -481,7 +485,7 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
       tokensCreated = await teamAndAdvisorsAllocationsContract.tokensCreated()
       tokensCreated.should.be.bignumber.equal(0)
 
-      await timer(dayInSecs * 190)
+      await timer(dayInSecs * 220)
 
       await teamAndAdvisorsAllocationsContract.unlock({ from: advisor1 })
       await teamAndAdvisorsAllocationsContract.unlock({ from: advisor2 })
