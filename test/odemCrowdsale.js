@@ -102,7 +102,10 @@ contract('ODEMCrowdsale', ([owner, wallet, rewardWallet, buyer, buyer2, advisor1
     })
 
     it('allows owner to change rate', async () => {
-      await crowdsale.setRate(newRate, { from: owner })
+      const { logs } = await crowdsale.setRate(newRate, { from: owner })
+
+      const event = logs.find(e => e.event === 'TokenRateChanged')
+      should.exist(event)
 
       const rate = await crowdsale.rate()
       rate.should.be.bignumber.equal(newRate)

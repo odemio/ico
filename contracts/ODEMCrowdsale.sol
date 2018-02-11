@@ -104,6 +104,15 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
     }
 
     /**
+     * @dev Set the address which should receive the vested team tokens share on finalization
+     * @param _teamAndAdvisorsAllocation address of team and advisor allocation contract
+     */
+    function setTeamWalletAddress(address _teamAndAdvisorsAllocation) public onlyOwner {
+        require(_teamAndAdvisorsAllocation != address(0x0));
+        teamAndAdvisorsAllocation = _teamAndAdvisorsAllocation;
+    }
+
+    /**
      * @dev payable function that allow token purchases
      * @param beneficiary Address of the purchaser
      */
@@ -162,15 +171,6 @@ contract ODEMCrowdsale is FinalizableCrowdsale, Pausable {
      */
     function createTokenContract() internal returns (MintableToken) {
         return new ODEMToken();
-    }
-
-    /**
-     * @dev Set the address which should receive the vested team tokens share on finalization
-     * @param _teamAndAdvisorsAllocation address of team and advisor allocation contract
-     */
-    function setTeamWalletAddress(address _teamAndAdvisorsAllocation) public onlyOwner {
-        require(_teamAndAdvisorsAllocation != address(0x0));
-        teamAndAdvisorsAllocation = _teamAndAdvisorsAllocation;
     }
 
     /**
