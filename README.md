@@ -1,62 +1,61 @@
-# ODEM.io ICO
+# ODEM
 
-## Development
+## Introduction
 
-**Dependencies**
+The *ODEM* Crowdsale is an ICO based on *Ethereum* smart contracts written in the *Solidity* programming language, starting in the middle of February 2018.
 
-* `node@8.5.x`
-* `truffle@^4.0.1`
-* `ganache-cli@^6.0.x`
-* `zeppelin-solidity@1.4.X`
+Prior to deploying this project onto the Ethereum main network, extensive code tests and several code audits were performed on the involved smart contracts.
 
-## Setting Up
+### Version notes
 
-* Clone this repository.
+* Commit id of deployment:   ``42b9404431be3da972bc9b671a3b8546cdc36f81``
+  from Feb 3, 2018, 16:42
+* [Deployed Crowdsale](https://etherscan.io/address/0x607646f9ad1925c1839f0cf77fd0bcf27e0e2994 "Deployed Crowdsale")
+* [Deployed Token](https://etherscan.io/address/0xbf52f2ab39e26e0951d2a02b49b7702abe30406a "Deployed Token")
+* [Deployed Whitelist](https://etherscan.io/address/0x52fcc1cb912c18008823841336ae24186ff5b6aa "Deployed Whitelist")
 
-* Install all [system dependencies](#development).
+## Functionality
 
-  * `npm install`
+### Pre-Crowdsale
 
-* Compile contract code
+During initialization, i.e. deployment, of an *ODEMCrowdsale* instance, a paused *ODEMToken* instance will be created, and the following state variables will be stored:
 
-  * `node_modules/.bin/truffle compile`
+-  start and end time of crowdsale period
+-  wallet and rewardWallet addresses
+-  address of prior to this created *Whitelist* instance
+-  address of newly created *ODEMToken* instance
+-  (tokens per wei) rate
 
-* Run the personal blockchain for development opting to have the accounts with many ether
+The rate can be changed by the owner at any later point in time, the other state variables not.
 
-  * `ganache-cli --gasLimit 8000000 --account="0xee4e871def4e297da77f99d57de26000e86077528847341bc637d2543f8db6e2,10000000000000000000000000" --account="0x4be9f21ddd88e9e66a526d8dbb00d27f6d7b977a186eb5baa87e896087a6055f,10000000000000000000000000" --account="0x09e775e9aa0ac5b5e1fd0d0bca00e2ef429dc5f5130ea769ba14be0163021f16, 10000000000000000000000000" --account="0xed055c1114c433f95d688c8d5e460d3e5d807544c5689af262451f1699ff684f, 10000000000000000000000000" --account="0x3f81b14d33f5eb597f9ad2c350716ba8f2b6c073eeec5fdb807d23c85cf05794,10000000000000000000000000" --account="0x501a3382d37d113b6490e3c4dda0756afb65df2d7977ede59618233c787239f2,10000000000000000000000000" --account="0x3d00e5c06597298b7d70c6fa3ac5dae376ff897763333db23c226d14d48333af, 10000000000000000000000000" --account="0xc00db81e42db65485d6ce98d727f12f2ace251cbf7b24a932c3afd3a356876ad, 10000000000000000000000000" --account="0xd6f7d873e7349c6d522455cb3ebdaa50b525dc6fd34f96b9e09e2d8a22dce925, 10000000000000000000000000" --account="0x13c8853ac12e9e30fda9f070fafe776031cc4d13bee88d7ad4e099601d83c594, 10000000000000000000000000"`
+Until the start of crowdsale the owner may mint tokens (with respect to the given cap) for the benefit of private investors.
 
-* Deploy contracts
-  * `node_modules/.bin/truffle develop`
-    Once you are in the develop console, run the command:
-  * `migrate --reset`
+### First Hour of Crowdsale
 
-## Running tests
+Within the first hour after the start of crowdsale regular investors can buy a per investor limited amount of tokens for themselves.
 
-    - `node_modules/.bin/truffle develop`
-    Once you are in the develop console, run the command:
-    - `test`
+Investors must be whitelisted prior to be able to purchase tokens. The whitelisting of an account can be done and undone at any point in time.
 
-# If you work on these contracts, write tests!
+### Remaining Duration of Crowdsale
 
-**Testing Pattern**
+Investors can buy tokens for themselves as long as the cap of total available tokens is not reached.
 
-* a good pattern to use, when testing restrictions on contract is to structure this way:
+Investors must be whitelisted prior to be able to purchase tokens. The whitelisting of an account can be done and undone at any point in time.
 
-```javascript
-describe('testing user restriction', () => {
-  beforeEach('deploy and prepare', () => {
-    // Deploy a contract(s) and prepare it up
-    // to the pass / fail point
-  })
+### End of Crowdsale
 
-  it('test the failing user', () => {
-    // Test something with the bad user
-    // in as few steps as possible
-  })
+The crowdsale ends if either the crowdsale period elapsed or all available tokens were sold to investors.
 
-  it('test the good user', () => {
-    // Test the VERY SAME steps,
-    // with only difference being the good user
-  })
-})
-```
+In the latter case the crowdsale will end before its predefined end time.
+
+### Finalization
+
+After end of crowdsale it has to be finalized manually by the owner.
+
+The *ODEMToken* instance will be unpaused, so that tokens become free tradable/transferable.
+
+### Audit
+
+[PDF Version](audit/ODEM_Audit.pdf "PDF Version")
+
+
