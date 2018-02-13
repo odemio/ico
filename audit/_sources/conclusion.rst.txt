@@ -1,0 +1,13 @@
+
+==========
+Conclusion
+==========
+
+After in-depth reading through the *ODEM* smart contract project code,
+intensive conversations with the customers and developers about the goals
+and the actual implementation of this project, extensive testing and
+attendance of source code corrections, no issues were found that would
+hinder the *ODEM* Crowdsale from being deployed on the Ethereum main network
+and thus going productive.
+
+

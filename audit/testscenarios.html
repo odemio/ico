@@ -1,0 +1,1275 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Testing &mdash; ODEM ICO Audit 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ODEM ICO Audit 1 documentation" href="index.html"/>
+        <link rel="next" title="Conclusion" href="conclusion.html"/>
+        <link rel="prev" title="Code Review" href="codereview.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ODEM ICO Audit
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functionality.html">Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codereview.html">Code Review</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#methodology">Methodology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#involved-roles-accounts">Involved Roles/Accounts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lifecycle">Lifecycle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-cases-whitelist">Test Cases Whitelist</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deployment">Deployment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-deployment-of-whitelist">Test: Deployment of Whitelist</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-addresses">Adding Addresses</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-whitelist-owner-adds-addresses">Test: Whitelist owner adds addresses</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-third-party-non-owner-adds-an-address">Test: A third party (non-owner) adds an address</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#removing-addresses">Removing Addresses</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-whitelist-owner-removes-addresses">Test: Whitelist owner removes addresses</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-third-party-non-owner-removes-an-address">Test: A third party (non-owner) removes an address</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#test-cases-odemcrowdsale">Test Cases ODEMCrowdsale</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Deployment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-deployment-of-odemcrowdsale-with-invalid-parameters">Test: Deployment of ODEMCrowdsale with invalid parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-deployment-of-odemcrowdsale-with-valid-parameters">Test: Deployment of ODEMCrowdsale with valid parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-constants-sanity-check">Test: Constants sanity check</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#explicit-state-value-changes">Explicit state value changes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-crowdsale-owner-sets-a-valid-rate">Test: Crowdsale owner sets a valid rate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-crowdsale-owner-sets-rate-to-zero">Test: Crowdsale owner sets rate to zero</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-third-party-non-owner-changes-rate">Test: A third party (non-owner) changes rate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-crowdsale-owner-sets-a-valid-teamandadvisorsallocation-address">Test: Crowdsale owner sets a valid teamAndAdvisorsAllocation address</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-crowdsale-owner-sets-teamandadvisorsallocation-to-zero-address">Test: Crowdsale owner sets teamAndAdvisorsAllocation to zero address</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-third-party-non-owner-sets-a-valid-teamandadvisorsallocation-address">Test: A third party (non-owner) sets a valid teamAndAdvisorsAllocation address</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#during-pre-crowdsale-period">During Pre-Crowdsale Period</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-invariants">Test: Invariants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-crowdsale-owner-mints-a-valid-amount-of-tokens-for-a-private-investor">Test: Crowdsale owner mints a valid amount of tokens for a private investor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-crowdsale-owner-mints-an-invalid-amount-of-tokens-for-a-private-investor">Test: Crowdsale owner mints an invalid amount of tokens for a private investor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-third-party-non-owner-mints-tokens-for-a-private-investor">Test: A third party (non-owner) mints tokens for a private investor</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#during-crowdsale-period">During Crowdsale Period</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Test: Invariants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Test: Crowdsale owner mints a valid amount of tokens for a private investor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-whitelisted-investor-buys-a-valid-amount-of-tokens">Test: A whitelisted investor buys a valid amount of tokens</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-whitelisted-investor-buys-too-many-tokens-within-the-first-hour">Test: A whitelisted investor buys too many tokens within the first hour</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-whitelisted-investor-buys-tokens-while-crowdsale-is-paused">Test: A whitelisted investor buys tokens while crowdsale is paused</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-whitelisted-investor-buys-tokens-for-the-benefit-of-another-account">Test: A whitelisted investor buys tokens for the benefit of another account</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-whitelisted-investor-buys-tokens-so-that-the-total-cap-is-exceeded">Test: A whitelisted investor buys tokens so that the total cap is exceeded</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-third-party-non-whitelisted-investor-buys-tokens">Test: A third party (non-whitelisted-investor) buys tokens</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#after-crowdsale-period">After Crowdsale Period</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Test: Invariants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-whitelisted-investor-buys-tokens">Test: A whitelisted investor buys tokens</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-crowdsale-owner-finalizes-without-having-set-a-team-wallet-address">Test: Crowdsale owner finalizes without having set a team wallet address</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-crowdsale-owner-finalizes-after-having-set-a-team-wallet-address">Test: Crowdsale owner finalizes after having set a team wallet address</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-crowdsale-owner-finalizes-a-again">Test: Crowdsale owner finalizes a again</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#test-cases-odemtoken">Test Cases ODEMToken</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Deployment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-deployment-of-odemtoken">Test: Deployment of ODEMToken</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#test-cases-teamandadvisorsallocation">Test Cases TeamAndAdvisorsAllocation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Deployment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-deployment-of-teamandavisorsallocation">Test: Deployment of TeamAndAvisorsAllocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Test: Constants sanity check</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#assigning-allocations">Assigning Allocations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-owner-adds-a-team-member-s-share">Test: Owner adds a team member’s share</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-owner-changes-a-team-member-s-share-before-it-was-unlocked">Test: Owner changes a team member’s share before it was unlocked</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-owner-adds-a-team-member-s-share-so-that-the-total-cap-is-exceeded">Test: Owner adds a team member’s share so that the total cap is exceeded</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-third-party-non-owner-adds-an-allocation">Test: A third party (non-owner) adds an allocation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#unlocking-token-share">Unlocking token share</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-team-member-unlocks-his-her-share-within-retention-period">Test: Team member unlocks his/her share within retention period</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-team-member-unlocks-his-her-share-after-retention-period">Test: Team member unlocks his/her share after retention period</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-team-member-unlocks-his-her-share-after-contract-was-killed">Test: Team member unlocks his/her share after contract was killed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-a-third-party-non-team-member-unlocks">Test: A third party (non-team-member) unlocks</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#contract-destruction">Contract Destruction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-owner-kills-contract-within-the-first-365-days-after-deployment">Test: Owner kills contract within the first 365 days after deployment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#t-owner-kills-contract-365-days-or-more-after-deployment">Test: Owner kills contract 365 days or more after deployment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#test-environments">Test Environments</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conclusion.html">Conclusion</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ODEM ICO Audit</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Testing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/testscenarios.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="testing">
+<h1>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h1>
+<p>In order to reveal issues in the contracts code which would have been
+overseen otherwise, some tests on the Ethereum Virtual Machine (EVM)
+were performed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There were no tests performed on the <em>OpenZeppelin</em> <em>Solidity</em> framework
+itself as it is supposed to have been thoroughly tested already.</p>
+</div>
+<div class="section" id="methodology">
+<h2>Methodology<a class="headerlink" href="#methodology" title="Permalink to this headline">¶</a></h2>
+<p>The identification and developing of test scenarios involved several steps:</p>
+<ol class="arabic simple">
+<li>All involved accounts and their roles had to be identified.</li>
+<li>The capabilities of these roles within different periods along the
+project’s life time were identified.</li>
+<li>Invariants within the different life cycle periods had to be
+identified.</li>
+<li>Based on the steps above test cases were drafted.
+Additional attention was paid to the actual implementation and
+meaningful constant values.</li>
+<li>Automated tests had to be written (where not already done).</li>
+<li>Manual tests and automated tests were run on different test environments.</li>
+</ol>
+</div>
+<div class="section" id="results">
+<h2>Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h2>
+<p><strong>All performed tests were successful, i.e. their results were as expected.</strong></p>
+</div>
+<div class="section" id="involved-roles-accounts">
+<h2>Involved Roles/Accounts<a class="headerlink" href="#involved-roles-accounts" title="Permalink to this headline">¶</a></h2>
+<p>The following roles where identified:</p>
+<dl class="docutils">
+<dt>Whitelist:</dt>
+<dd><ul class="first last simple">
+<li>contract account of <code class="code sol docutils literal"><span class="pre">Whitelist</span></code> instance</li>
+</ul>
+</dd>
+<dt>Whitelist owner:</dt>
+<dd><ul class="first last simple">
+<li>a regular account</li>
+<li>initially the deployer of <code class="code sol docutils literal"><span class="pre">Whitelist</span></code> but this can change
+due to <code class="code sol docutils literal"><span class="pre">transferOwnership</span></code></li>
+</ul>
+</dd>
+<dt>Crowdsale:</dt>
+<dd><ul class="first last simple">
+<li>contract account of <code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code> instance</li>
+</ul>
+</dd>
+<dt>Crowdsale owner:</dt>
+<dd><ul class="first last simple">
+<li>a regular account</li>
+<li>initially the deployer of <code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code> but this can change
+due to <code class="code sol docutils literal"><span class="pre">transferOwnership</span></code></li>
+</ul>
+</dd>
+<dt>Private investor:</dt>
+<dd><ul class="first last simple">
+<li>multiple accounts which receive tokens during pre-crowdsale period</li>
+<li>regular accounts while testing</li>
+</ul>
+</dd>
+<dt>Regular investor / Whitelisted Investor:</dt>
+<dd><ul class="first last simple">
+<li>multiple accounts which were added to <code class="code sol docutils literal"><span class="pre">Whitelist</span></code></li>
+<li>buy tokens during crowdsale</li>
+<li>regular accounts while testing</li>
+</ul>
+</dd>
+<dt>Company Wallet:</dt>
+<dd><ul class="first last simple">
+<li>contract account of a multisig wallet</li>
+<li>a reguar account while testing</li>
+</ul>
+</dd>
+<dt>Reward Wallet:</dt>
+<dd><ul class="first last simple">
+<li>contract account of a wallet receiving bounty tokens</li>
+<li>a reguar account while testing</li>
+</ul>
+</dd>
+<dt>Token:</dt>
+<dd><ul class="first last simple">
+<li>contract account of <code class="code sol docutils literal"><span class="pre">ODEMToken</span></code> instance</li>
+</ul>
+</dd>
+<dt>Token Owner:</dt>
+<dd><ul class="first last simple">
+<li>same as <em>Crowdsale</em> while testing crowdsale (and when in production)</li>
+<li>a regular account for simple isolated tests</li>
+</ul>
+</dd>
+<dt>Token Holder:</dt>
+<dd><ul class="first last simple">
+<li>multiple accounts while testing</li>
+<li>have a non-zero token balance</li>
+<li><dl class="first docutils">
+<dt>includes</dt>
+<dd><ul class="first last">
+<li><em>Private investor</em>
+(due to pre-crowdsale minting)</li>
+<li><em>Regular investor</em>
+(due to token purchase during crowdsale)</li>
+<li><em>Company wallet</em>
+(due to received share on crowdsale finalization)</li>
+<li><em>Reward wallet</em>
+(due to received share on crowdsale finalization)</li>
+<li><em>TeamAndAdvisorsAllocation</em>
+(due to received share on crowdsale finalization)</li>
+<li><em>TeamAndAdvisorsAllocation owner</em>
+(due to destruction of <code class="code sol docutils literal"><span class="pre">TeamAndAdvisorsAllocation</span></code>)</li>
+<li><em>Team member</em>
+(due to token share allocation after 182 days retention period)</li>
+<li>other accounts
+(due to token trades/transfers after crowdsale finalzation)</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>TeamAndAdvisorsAllocation:</dt>
+<dd><ul class="first last simple">
+<li>contract account of <code class="code sol docutils literal"><span class="pre">TeamAndAdvisorsAllocation</span></code></li>
+</ul>
+</dd>
+<dt>TeamAndAdvisorsAllocation owner:</dt>
+<dd><ul class="first last simple">
+<li>a regular account</li>
+<li>initially the deployer of <code class="code sol docutils literal"><span class="pre">TeamAndAdvisorsAllocation</span></code> but this can
+change due to <code class="code sol docutils literal"><span class="pre">transferOwnership</span></code></li>
+</ul>
+</dd>
+<dt>Team member:</dt>
+<dd><ul class="first last simple">
+<li>multiple regular accounts while testing</li>
+<li>were added to <code class="code sol docutils literal"><span class="pre">TeamAndAdvisorsAllocation</span></code> with a non-zero share</li>
+</ul>
+</dd>
+<dt>Third party:</dt>
+<dd><ul class="first last simple">
+<li>any unprivileged account</li>
+<li>context depends on specific test</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="lifecycle">
+<h2>Lifecycle<a class="headerlink" href="#lifecycle" title="Permalink to this headline">¶</a></h2>
+<p>The following diagram gives a brief overview of the allowed/forbidden actions
+the participating roles may (green bars) or may not (red bars) perform over
+the time.</p>
+<div class="figure">
+<img alt="_images/timeline.svg" src="_images/timeline.svg" /></div>
+<p><sup>Capabilities of participants over time</sup></p>
+</div>
+<div class="section" id="test-cases-whitelist">
+<h2>Test Cases Whitelist<a class="headerlink" href="#test-cases-whitelist" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="deployment">
+<h3>Deployment<a class="headerlink" href="#deployment" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="t-deployment-of-whitelist">
+<h4>Test: Deployment of Whitelist<a class="headerlink" href="#t-deployment-of-whitelist" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>A deployed <code class="code sol docutils literal"><span class="pre">Whitelist</span></code> is needed prior to the deployment
+of <code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code>.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>Deployer account becomes whitelist owner.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="adding-addresses">
+<h3>Adding Addresses<a class="headerlink" href="#adding-addresses" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="t-whitelist-owner-adds-addresses">
+<h4>Test: Whitelist owner adds addresses<a class="headerlink" href="#t-whitelist-owner-adds-addresses" title="Permalink to this headline">¶</a></h4>
+<p>This test was carried as multiple sub-tests with:</p>
+<ol class="arabic simple">
+<li>a single address that wasn’t whitelisted before</li>
+<li>a single address that was whitelisted already</li>
+<li>ten addresses at once, where the address list contains double entries
+and invalid addresses (<code class="code sol docutils literal"><span class="pre">address(0)</span></code>)</li>
+</ol>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The <em>Whitelist</em> implementation is agnostic regarding submitted addresses.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>For every submitted item in address list an event <code class="code sol docutils literal"><span class="pre">WhitelistUpdated</span></code>
+with <code class="code sol docutils literal"><span class="pre">operation</span> <span class="pre">=</span> <span class="pre">&quot;Added&quot;</span></code> is logged.</li>
+<li>For every submitted address <code class="code sol docutils literal"><span class="pre">addr</span></code> the function call
+<code class="code sol docutils literal"><span class="pre">isWhitelisted(addr)</span></code> returns  <code class="code sol docutils literal"><span class="pre">true</span></code>.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-third-party-non-owner-adds-an-address">
+<h4>Test: A third party (non-owner) adds an address<a class="headerlink" href="#t-a-third-party-non-owner-adds-an-address" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Only the whitelist owner should be able to add addresses.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / Transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="removing-addresses">
+<h3>Removing Addresses<a class="headerlink" href="#removing-addresses" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="t-whitelist-owner-removes-addresses">
+<h4>Test: Whitelist owner removes addresses<a class="headerlink" href="#t-whitelist-owner-removes-addresses" title="Permalink to this headline">¶</a></h4>
+<p>This test was carried out as multiple sub-tests with:</p>
+<ol class="arabic simple">
+<li>a single address that is whitelisted</li>
+<li>a single address that wasn’t whitelisted before</li>
+<li>ten addresses at once, where the address list contains double entries
+and invalid addresses (<code class="code sol docutils literal"><span class="pre">address(0)</span></code>)</li>
+</ol>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The <em>Whitelist</em> implementation is agnostic regarding submitted addresses.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>For every submitted item in address list an event <code class="code sol docutils literal"><span class="pre">WhitelistUpdated</span></code>
+with <code class="code sol docutils literal"><span class="pre">operation</span> <span class="pre">=</span> <span class="pre">&quot;Removed&quot;</span></code> is logged.</li>
+<li>For every submitted address <code class="code sol docutils literal"><span class="pre">addr</span></code> the function call
+<code class="code sol docutils literal"><span class="pre">isWhitelisted(addr)</span></code> returns  <code class="code sol docutils literal"><span class="pre">false</span></code>.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-third-party-non-owner-removes-an-address">
+<h4>Test: A third party (non-owner) removes an address<a class="headerlink" href="#t-a-third-party-non-owner-removes-an-address" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Only the whitelist owner should be able to remove addresses.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / Transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="test-cases-odemcrowdsale">
+<h2>Test Cases ODEMCrowdsale<a class="headerlink" href="#test-cases-odemcrowdsale" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Deployment<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="t-deployment-of-odemcrowdsale-with-invalid-parameters">
+<h4>Test: Deployment of ODEMCrowdsale with invalid parameters<a class="headerlink" href="#t-deployment-of-odemcrowdsale-with-invalid-parameters" title="Permalink to this headline">¶</a></h4>
+<p>This test was carried out as multiple sub-tests where:</p>
+<ol class="arabic simple">
+<li><code class="code sol docutils literal"><span class="pre">_startTime</span> <span class="pre">&lt;</span> <span class="pre">now</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">_startTime</span> <span class="pre">&gt;</span> <span class="pre">_endTime</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">_whitelist</span> <span class="pre">=</span> <span class="pre">address(0)</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">_rate</span> <span class="pre">=</span> <span class="pre">0</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">_wallet</span> <span class="pre">=</span> <span class="pre">address(0)</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">_rewardWallet</span> <span class="pre">=</span> <span class="pre">address(0)</span></code></li>
+</ol>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>These are base constraints on the given values for a proper functionality
+of the crowdsale.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / Transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-deployment-of-odemcrowdsale-with-valid-parameters">
+<h4>Test: Deployment of ODEMCrowdsale with valid parameters<a class="headerlink" href="#t-deployment-of-odemcrowdsale-with-valid-parameters" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Contract <code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code> must be deployable.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last">
+<li><p class="first">Success.</p>
+</li>
+<li><p class="first">Deployer account becomes crowdsale owner.</p>
+</li>
+<li><p class="first">The following constructor parameters set state variables to given values</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="code sol docutils literal"><span class="pre">_startTime</span></code> → <code class="code sol docutils literal"><span class="pre">startTime</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">_endTime</span></code> → <code class="code sol docutils literal"><span class="pre">endTime</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">_whitelist</span></code> → <code class="code sol docutils literal"><span class="pre">whitelist</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">_rate</span></code> → <code class="code sol docutils literal"><span class="pre">rate</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">_wallet</span></code> → <code class="code sol docutils literal"><span class="pre">wallet</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">_rewardWallet</span></code> → <code class="code sol docutils literal"><span class="pre">rewardWallet</span></code></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">The state variable <code class="code sol docutils literal"><span class="pre">oneHourAfterStartTime</span></code> is correctly calculated
+as <code class="code sol docutils literal"><span class="pre">startTime</span> <span class="pre">+</span> <span class="pre">60</span> <span class="pre">*</span> <span class="pre">60</span></code></p>
+</li>
+<li><p class="first">An <code class="code sol docutils literal"><span class="pre">ODEMToken</span></code> instance was created and assigned to state variable
+<code class="code sol docutils literal"><span class="pre">token</span></code>:</p>
+<blockquote>
+<div><ul class="simple">
+<li>the attribute <code class="code sol docutils literal"><span class="pre">token.name</span></code> should be <code class="code sol docutils literal"><span class="pre">&quot;ODEM</span> <span class="pre">Token&quot;</span></code></li>
+<li>the token owner is the crowdsale contract account</li>
+<li>the token is paused, i.e. <code class="code sol docutils literal"><span class="pre">token.paused</span></code> is set to <code class="code sol docutils literal"><span class="pre">true</span></code></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-constants-sanity-check">
+<h4>Test: Constants sanity check<a class="headerlink" href="#t-constants-sanity-check" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd><p class="first">The defined constants in <code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code> impose restrictions on the
+amount of mintable/available tokens.
+The following conditions are not explicitly checked within the code, but
+rely on meaningful hard-coded values:</p>
+<blockquote class="last">
+<div><ul>
+<li><p class="first"><code class="code sol docutils literal"><span class="pre">PRE_CROWDSALE_CAP</span> <span class="pre">&lt;=</span> <span class="pre">TOTAL_TOKENS_FOR_CROWDSALE</span></code></p>
+</li>
+<li><p class="first"><code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_FOR_CROWDSALE</span> <span class="pre">&lt;=</span> <span class="pre">TOTAL_TOKENS_SUPPLY</span></code></p>
+</li>
+<li><div class="first highlight-javascript"><div class="highlight"><pre><span></span><span class="nx">TOTAL_TOKENS_SUPPLY</span> <span class="o">&gt;=</span> <span class="nx">BOUNTY_REWARD_SHARE</span>
+                       <span class="o">+</span> <span class="nx">VESTED_TEAM_ADVISORS_SHARE</span>
+                       <span class="o">+</span> <span class="nx">NON_VESTED_TEAM_ADVISORS_SHARE</span>
+                       <span class="o">+</span> <span class="nx">COMPANY_SHARE</span>
+                       <span class="o">+</span> <span class="nx">TOTAL_TOKENS_FOR_CROWDSALE</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>The constraints are fulfilled.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="explicit-state-value-changes">
+<h3>Explicit state value changes<a class="headerlink" href="#explicit-state-value-changes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="t-crowdsale-owner-sets-a-valid-rate">
+<h4>Test: Crowdsale owner sets a valid rate<a class="headerlink" href="#t-crowdsale-owner-sets-a-valid-rate" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The rate can be changed at any time as long at is greater than 0.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>The crowdsale state variable <code class="code sol docutils literal"><span class="pre">rate</span></code> is properly adjusted.</li>
+<li>An event <code class="code sol docutils literal"><span class="pre">TokenRateChanged</span></code> with correct values for old and new
+rate is logged.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-crowdsale-owner-sets-rate-to-zero">
+<h4>Test: Crowdsale owner sets rate to zero<a class="headerlink" href="#t-crowdsale-owner-sets-rate-to-zero" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>An invariant is sol:<cite>rate &gt; 0</cite>.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-third-party-non-owner-changes-rate">
+<h4>Test: A third party (non-owner) changes rate<a class="headerlink" href="#t-a-third-party-non-owner-changes-rate" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Only the crowdsale owner should be able to change the rate.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-crowdsale-owner-sets-a-valid-teamandadvisorsallocation-address">
+<h4>Test: Crowdsale owner sets a valid teamAndAdvisorsAllocation address<a class="headerlink" href="#t-crowdsale-owner-sets-a-valid-teamandadvisorsallocation-address" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The teamAndAdvisorsAllocation address can be changed at any time.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>The crowdsale state variable <code class="code sol docutils literal"><span class="pre">teamAndAdvisorsAllocation</span></code> is
+properly adjusted.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-crowdsale-owner-sets-teamandadvisorsallocation-to-zero-address">
+<h4>Test: Crowdsale owner sets teamAndAdvisorsAllocation to zero address<a class="headerlink" href="#t-crowdsale-owner-sets-teamandadvisorsallocation-to-zero-address" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The supplied address must be non-zero.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-third-party-non-owner-sets-a-valid-teamandadvisorsallocation-address">
+<h4>Test: A third party (non-owner) sets a valid teamAndAdvisorsAllocation address<a class="headerlink" href="#t-a-third-party-non-owner-sets-a-valid-teamandadvisorsallocation-address" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Only the crowdsale owner should be able to set the team wallet address.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="during-pre-crowdsale-period">
+<h3>During Pre-Crowdsale Period<a class="headerlink" href="#during-pre-crowdsale-period" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="t-invariants">
+<h4>Test: Invariants<a class="headerlink" href="#t-invariants" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale: During pre-crowdsale the following condition must hold:</dt>
+<dd><ul class="first last simple">
+<li><cite>token.totalSupply &lt;= PRE_CROWDSALE_CAP</cite></li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-crowdsale-owner-mints-a-valid-amount-of-tokens-for-a-private-investor">
+<h4>Test: Crowdsale owner mints a valid amount of tokens for a private investor<a class="headerlink" href="#t-crowdsale-owner-mints-a-valid-amount-of-tokens-for-a-private-investor" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Before crowdsale starts private investors get their token share minted
+by owner.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>The investors token balance gets increased by the correct amount.</li>
+<li>The total token supply is increased accordingly.</li>
+<li>An event <code class="code sol docutils literal"><span class="pre">PrivateInvestorTokenPurchase</span></code> with correct token amount
+is logged.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-crowdsale-owner-mints-an-invalid-amount-of-tokens-for-a-private-investor">
+<h4>Test: Crowdsale owner mints an invalid amount of tokens for a private investor<a class="headerlink" href="#t-crowdsale-owner-mints-an-invalid-amount-of-tokens-for-a-private-investor" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The total amount of mintable tokens during pre-crowdsale is capped by
+constant <code class="code sol docutils literal"><span class="pre">PRE_CROWDSALE_CAP</span></code>.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-third-party-non-owner-mints-tokens-for-a-private-investor">
+<h4>Test: A third party (non-owner) mints tokens for a private investor<a class="headerlink" href="#t-a-third-party-non-owner-mints-tokens-for-a-private-investor" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Only crowdsale owner should be able to mint tokens during
+pre-crowdsale period.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="during-crowdsale-period">
+<h3>During Crowdsale Period<a class="headerlink" href="#during-crowdsale-period" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h4>Test: Invariants<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale: During pre-crowdsale the following condition must hold:</dt>
+<dd><ul class="first last simple">
+<li><cite>token.totalSupply &lt;= TOTAL_TOKENS_FOR_CROWDSALE</cite></li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="id3">
+<h4>Test: Crowdsale owner mints a valid amount of tokens for a private investor<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>After the crowdsale has started the owner should not be able anymore to
+mint tokens for private investors.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-whitelisted-investor-buys-a-valid-amount-of-tokens">
+<h4>Test: A whitelisted investor buys a valid amount of tokens<a class="headerlink" href="#t-a-whitelisted-investor-buys-a-valid-amount-of-tokens" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Any account that was whitelisted should be able to purchase tokens
+as long as the individual first hour cap or the total token cap won’t
+be exceeded.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>The token amount is <code class="code sol docutils literal"><span class="pre">rate</span> <span class="pre">*</span> <span class="pre">msg.value</span></code>.</li>
+<li>The investor’s entry in <code class="code sol docutils literal"><span class="pre">trackBuyersPurchase</span></code> is increased by the
+correct token amount.</li>
+<li>The state variable <code class="code sol docutils literal"><span class="pre">weiRaised</span></code> is increased by sent wei value.</li>
+<li>The sent wei are forwarded to the company wallet.</li>
+<li>The investor’s token balance gets increased by the correct token amount.</li>
+<li>The total token supply is increased accordingly.</li>
+<li>An event <code class="code sol docutils literal"><span class="pre">TokenPurchase</span></code> with correct token amount and value is
+logged.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-whitelisted-investor-buys-too-many-tokens-within-the-first-hour">
+<h4>Test: A whitelisted investor buys too many tokens within the first hour<a class="headerlink" href="#t-a-whitelisted-investor-buys-too-many-tokens-within-the-first-hour" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>During the first hour after crowdsale start the individual total amount of
+tokens an investor can buy is limited by constant
+<code class="code sol docutils literal"><span class="pre">PERSONAL_FIRST_HOUR_CAP</span></code>.
+This cap doesn’t take tokens into account which were received during
+pre-crowdsale.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-whitelisted-investor-buys-tokens-while-crowdsale-is-paused">
+<h4>Test: A whitelisted investor buys tokens while crowdsale is paused<a class="headerlink" href="#t-a-whitelisted-investor-buys-tokens-while-crowdsale-is-paused" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The crowdsale owner can pause and unpause the crowdsale.
+During pause nobody should be able to purchase tokens, even if the
+purchaser was whitelisted and no cap would be exceeded.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-whitelisted-investor-buys-tokens-for-the-benefit-of-another-account">
+<h4>Test: A whitelisted investor buys tokens for the benefit of another account<a class="headerlink" href="#t-a-whitelisted-investor-buys-tokens-for-the-benefit-of-another-account" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The crowdsale definition in <em>OpenZeppelin</em>’s <em>Solidity</em> framework allows
+a token purchaser to be different from the beneficiary.
+In <code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code> purchaser and beneficiary must be the same account.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-whitelisted-investor-buys-tokens-so-that-the-total-cap-is-exceeded">
+<h4>Test: A whitelisted investor buys tokens so that the total cap is exceeded<a class="headerlink" href="#t-a-whitelisted-investor-buys-tokens-so-that-the-total-cap-is-exceeded" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The total amount of tokens minted during pre-crowdsale and crowdsale
+is capped by the constant <code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_FOR_CROWDSALE</span></code>.
+If a purchase exceeds this limit the purchaser receives the remaining
+tokens. His/Her account and overspent wei value will be safed for later
+refund.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>The received amount token are the remaining, i.e. difference of
+<code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_FOR_CROWDSALE</span> <span class="pre">-</span> <span class="pre">token.totalSupply</span></code>, their worth
+in wei is remaing tokens divided by <code class="code sol docutils literal"><span class="pre">rate</span></code>.</li>
+<li>The state variable <code class="code sol docutils literal"><span class="pre">weiRaised</span></code> is increased by wei worth of
+remaining tokens.</li>
+<li>The sent wei are forwarded to the company wallet.</li>
+<li>The investor’s token balance gets increased by the received token amount.</li>
+<li>The total token supply is increased accordingly and should be equal to
+<code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_FOR_CROWDSALE</span></code>.</li>
+<li>An event <code class="code sol docutils literal"><span class="pre">TokenPurchase</span></code> with received token amount and worth in wei
+logged.</li>
+<li>The crowdsale ends early, i.e. <code class="code sol docutils literal"><span class="pre">hasEnded</span></code> becomes true.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-third-party-non-whitelisted-investor-buys-tokens">
+<h4>Test: A third party (non-whitelisted-investor) buys tokens<a class="headerlink" href="#t-a-third-party-non-whitelisted-investor-buys-tokens" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Prior to be able to purchase tokens investors have to be whitelisted.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="after-crowdsale-period">
+<h3>After Crowdsale Period<a class="headerlink" href="#after-crowdsale-period" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h4>Test: Invariants<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale: After -crowdsale the following condition must hold:</dt>
+<dd><ul class="first last simple">
+<li><cite>token.totalSupply == TOTAL_TOKENS_SUPPLY</cite></li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-whitelisted-investor-buys-tokens">
+<h4>Test: A whitelisted investor buys tokens<a class="headerlink" href="#t-a-whitelisted-investor-buys-tokens" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>After the crowdsale has ended nobody should be able to buy tokens
+anymore, even if the investor is whitelisted or the total token cap was
+not reached, i.e. the crowdsale ended due to <code class="code sol docutils literal"><span class="pre">endTime</span></code>.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-crowdsale-owner-finalizes-without-having-set-a-team-wallet-address">
+<h4>Test: Crowdsale owner finalizes without having set a team wallet address<a class="headerlink" href="#t-crowdsale-owner-finalizes-without-having-set-a-team-wallet-address" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Prior to finalization the address of a <code class="code sol docutils literal"><span class="pre">TeamAndAdvisorAllocation</span></code>
+contract instance has to be saved.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-crowdsale-owner-finalizes-after-having-set-a-team-wallet-address">
+<h4>Test: Crowdsale owner finalizes after having set a team wallet address<a class="headerlink" href="#t-crowdsale-owner-finalizes-after-having-set-a-team-wallet-address" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The finalization of crowdsale is a crucial step to make the token
+tradeable/transferrable.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>Token balance of teamAndAdvisorsAllocation is increased by
+<code class="code sol docutils literal"><span class="pre">VESTED_TEAM_ADVISORS_SHARE</span></code>.</li>
+<li>Token balance of company wallet is increased by
+<code class="code sol docutils literal"><span class="pre">NON_VESTED_TEAM_ADVISORS_SHARE</span> <span class="pre">+</span> <span class="pre">COMPANY_SHARE</span></code> plus the remaining
+total amount of tokens
+(<code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_SUPPLY</span> <span class="pre">-</span> <span class="pre">token.totalSupply</span></code>).</li>
+<li>Token balance of reward wallet is increased by
+<code class="code sol docutils literal"><span class="pre">BOUNTY_REWARD_SHARE</span></code>.</li>
+<li>The token total supply is <code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_SUPPLY</span></code>.</li>
+<li>The token minting is finished, i.e. not possible anymore.</li>
+<li>The token is unpaused, i.e. is tradeable.</li>
+<li>An event <code class="code sol docutils literal"><span class="pre">Finalized</span></code> (for the crowdsale) and an event
+<code class="code sol docutils literal"><span class="pre">Unpause</span></code> (for the token) are logged.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-crowdsale-owner-finalizes-a-again">
+<h4>Test: Crowdsale owner finalizes a again<a class="headerlink" href="#t-crowdsale-owner-finalizes-a-again" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>A finalized crowdsale should not be finalizable anymore.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="test-cases-odemtoken">
+<h2>Test Cases ODEMToken<a class="headerlink" href="#test-cases-odemtoken" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h3>Deployment<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="t-deployment-of-odemtoken">
+<h4>Test: Deployment of ODEMToken<a class="headerlink" href="#t-deployment-of-odemtoken" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The token contract will be deployed automatically by
+<code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code> on initialization.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>Deployer account (crowdsale contract) becomes token owner.</li>
+<li>The global state variables <code class="code sol docutils literal"><span class="pre">name</span></code>, <code class="code sol docutils literal"><span class="pre">symbol</span></code>, <code class="code sol docutils literal"><span class="pre">decimals</span></code>
+are correctly set.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="test-cases-teamandadvisorsallocation">
+<h2>Test Cases TeamAndAdvisorsAllocation<a class="headerlink" href="#test-cases-teamandadvisorsallocation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h3>Deployment<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="t-deployment-of-teamandavisorsallocation">
+<h4>Test: Deployment of TeamAndAvisorsAllocation<a class="headerlink" href="#t-deployment-of-teamandavisorsallocation" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Contract <code class="code sol docutils literal"><span class="pre">TeamAndAvisorsAllocation</span></code> must be deployable.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>Deployer account becomes contract instance owner.</li>
+<li>The state variable <code class="code sol docutils literal"><span class="pre">odem</span></code> is set to the constructor parameters
+value <code class="code sol docutils literal"><span class="pre">token</span></code>.</li>
+<li>The state variable <code class="code sol docutils literal"><span class="pre">unlockedAt</span></code> is correctly calculated
+as <code class="code sol docutils literal"><span class="pre">now</span> <span class="pre">+</span> <span class="pre">182</span> <span class="pre">days</span></code> (<code class="code sol docutils literal"><span class="pre">=</span> <span class="pre">now</span> <span class="pre">+</span> <span class="pre">182</span> <span class="pre">*</span> <span class="pre">24</span> <span class="pre">*</span> <span class="pre">60</span> <span class="pre">*</span> <span class="pre">60</span></code>).</li>
+<li>The state variable <code class="code sol docutils literal"><span class="pre">canSelfDestruct</span></code> is correctly calculated
+as <code class="code sol docutils literal"><span class="pre">now</span> <span class="pre">+</span> <span class="pre">365</span> <span class="pre">days</span></code> (<code class="code sol docutils literal"><span class="pre">=</span> <span class="pre">now</span> <span class="pre">+</span> <span class="pre">365</span> <span class="pre">*</span> <span class="pre">24</span> <span class="pre">*</span> <span class="pre">60</span> <span class="pre">*</span> <span class="pre">60</span></code>).</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="id7">
+<h4>Test: Constants sanity check<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The constants <code class="code sol docutils literal"><span class="pre">totalTeamAndAdvisorsAllocation</span></code> constitutes a cap on
+the amount of tokens that can be assigned by team members.
+It should not be greater than the amount of tokens that get minted for
+this contract on crowdsale finalization
+(<code class="code sol docutils literal"><span class="pre">ODEMCrowdsale.VESTED_TEAM_ADVISORS_SHARE</span></code>), otherwise some team
+members won’t be able to unlock their share.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>The constraint is fulfilled.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="assigning-allocations">
+<h3>Assigning Allocations<a class="headerlink" href="#assigning-allocations" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="t-owner-adds-a-team-member-s-share">
+<h4>Test: Owner adds a team member’s share<a class="headerlink" href="#t-owner-adds-a-team-member-s-share" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The team member’s share gets saved.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>The total number of allocated tokens is increased by the share amount.</li>
+<li>The team member’s share is correctly added to the state variable
+<code class="code sol docutils literal"><span class="pre">teamAndAdvisorsAllocations</span></code>.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-owner-changes-a-team-member-s-share-before-it-was-unlocked">
+<h4>Test: Owner changes a team member’s share before it was unlocked<a class="headerlink" href="#t-owner-changes-a-team-member-s-share-before-it-was-unlocked" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The share of a team member (an account) can be set only once
+until it gets unlocked and thus withdrawn by the team member.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-owner-adds-a-team-member-s-share-so-that-the-total-cap-is-exceeded">
+<h4>Test: Owner adds a team member’s share so that the total cap is exceeded<a class="headerlink" href="#t-owner-adds-a-team-member-s-share-so-that-the-total-cap-is-exceeded" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The total amount of allocated tokens must not be greater than
+<code class="code sol docutils literal"><span class="pre">totalTeamAndAdvisorsAllocation</span></code>.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-third-party-non-owner-adds-an-allocation">
+<h4>Test: A third party (non-owner) adds an allocation<a class="headerlink" href="#t-a-third-party-non-owner-adds-an-allocation" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Only the owner should be able to add allocations.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="unlocking-token-share">
+<h3>Unlocking token share<a class="headerlink" href="#unlocking-token-share" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="t-team-member-unlocks-his-her-share-within-retention-period">
+<h4>Test: Team member unlocks his/her share within retention period<a class="headerlink" href="#t-team-member-unlocks-his-her-share-within-retention-period" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Nobody should be able to unlock his/her share during the first 182 days
+after contract deployment.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-team-member-unlocks-his-her-share-after-retention-period">
+<h4>Test: Team member unlocks his/her share after retention period<a class="headerlink" href="#t-team-member-unlocks-his-her-share-after-retention-period" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Team members get their token share by unlocking it, so that it gets
+credited to their token balance.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>The total amount of tokens possessed by the contract is saved
+to <code class="code sol docutils literal"><span class="pre">tokensCreated</span></code> if this was the first call to <code class="code sol docutils literal"><span class="pre">unlock()</span></code>
+by anyone.</li>
+<li>Token balance of <em>TeamAndAdvisorsAllocation</em> contract is reduced
+by the team member’s share.</li>
+<li>Token balance of team member is increased by his/her share.</li>
+<li>The allocation of the team member is set to zero.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-team-member-unlocks-his-her-share-after-contract-was-killed">
+<h4>Test: Team member unlocks his/her share after contract was killed<a class="headerlink" href="#t-team-member-unlocks-his-her-share-after-contract-was-killed" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>After killing the contract no unlocking of token share should be possible.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-a-third-party-non-team-member-unlocks">
+<h4>Test: A third party (non-team-member) unlocks<a class="headerlink" href="#t-a-third-party-non-team-member-unlocks" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Non-team-members have no token share, i.e. their allocation is zero.
+If they attempt to unlock they’ll waste gas.</dd>
+<dt>Test:</dt>
+<dd><ul class="first last simple">
+<li>Success.</li>
+<li>The total amount of tokens possessed by the contract is saved
+to <code class="code sol docutils literal"><span class="pre">tokensCreated</span></code> if this was the first call to <code class="code sol docutils literal"><span class="pre">unlock()</span></code>
+by anyone.</li>
+<li>An amount of zero tokens will be transferred / added to the caller’s
+balance.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="contract-destruction">
+<h3>Contract Destruction<a class="headerlink" href="#contract-destruction" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="t-owner-kills-contract-within-the-first-365-days-after-deployment">
+<h4>Test: Owner kills contract within the first 365 days after deployment<a class="headerlink" href="#t-owner-kills-contract-within-the-first-365-days-after-deployment" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>The <code class="code sol docutils literal"><span class="pre">TeamAndAdvisorsAllocation</span></code> contract instance has to be accessible
+for at least one year.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>Failure / transaction reversal.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="t-owner-kills-contract-365-days-or-more-after-deployment">
+<h4>Test: Owner kills contract 365 days or more after deployment<a class="headerlink" href="#t-owner-kills-contract-365-days-or-more-after-deployment" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Rationale:</dt>
+<dd>Destroying the <code class="code sol docutils literal"><span class="pre">TeamAndAdvisorsAllocation</span></code> contract will make all
+team members lose their not-yet unlocked token share.</dd>
+<dt>Expected behavior:</dt>
+<dd><ul class="first last simple">
+<li>All remaining tokens of the contract (including those which weren’t
+unlocked by team members) get transferred to the owner, thus increasing
+his/her token balance.</li>
+<li>Token balance of <code class="code sol docutils literal"><span class="pre">TeamAndAdvisorsAllocation</span></code> instance is zero.</li>
+<li>The contract gets destroyed (code data of account is set to <code class="docutils literal"><span class="pre">0x0</span></code>).</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="test-environments">
+<h2>Test Environments<a class="headerlink" href="#test-environments" title="Permalink to this headline">¶</a></h2>
+<p>The <em>ODEM ICO</em> contracts were tested on different networks.</p>
+<ol class="arabic">
+<li><p class="first">Deployment on the <a class="reference external" href="https://www.rinkeby.io/">Rinkeby</a> test network.</p>
+<p>The testing was carried out by manually calling the contract functions
+via <a class="reference external" href="https://www.myetherwallet.com/">MyEtherWallet</a> and <a class="reference external" href="https://metamask.io/">MetaMask</a> from different accounts.</p>
+<p>Analysis of transaction history and contract state were done via
+MyEtherWallet and <a class="reference external" href="https://rinkeby.etherscan.io/">Etherscan</a>.</p>
+</li>
+<li><p class="first">Deployment on a local machine.</p>
+<p>Automated tests for the <a class="reference external" href="http://truffleframework.com/">Truffle</a> (v4.0.5) test framework were written
+and executed on a local <a class="reference external" href="http://truffleframework.com/ganache/">Ganache-CLI</a> (v6.0.3) instance.</p>
+</li>
+<li><p class="first">Deployment on a local test network.</p>
+<p>The above mentioned automated tests and some additional manual tests
+were carried out on a <a class="reference external" href="https://www.parity.io/">Parity</a> (v1.8.6) development network.</p>
+<p>Analysis of transaction history and contract state was done via
+Parity’s frontend.</p>
+</li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="conclusion.html" class="btn btn-neutral float-right" title="Conclusion" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="codereview.html" class="btn btn-neutral" title="Code Review" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

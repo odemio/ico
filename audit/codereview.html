@@ -1,0 +1,963 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Code Review &mdash; ODEM ICO Audit 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ODEM ICO Audit 1 documentation" href="index.html"/>
+        <link rel="next" title="Testing" href="testscenarios.html"/>
+        <link rel="prev" title="Functionality" href="functionality.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ODEM ICO Audit
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functionality.html">Functionality</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Code Review</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#methodology">Methodology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#known-attacks">Known Attacks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#reentrancy-attack">Reentrancy attack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#overflows-attacks">Overflows attacks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#short-address-attack">Short address attack</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#source-whitelist-sol">Source Whitelist.sol</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#major-issues">Major issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#minor-issues">Minor issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#notes">Notes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions-addtowhitelist-and-removefromwhitelist">Functions <em>addToWhitelist(…)</em> and <em>removeFromWhitelist(…)</em></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#coding-style">Coding style</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#doc-comments">Doc comments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#source-odemcrowdsale-sol">Source ODEMCrowdsale.sol</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Major issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Minor issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Notes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#function-buytoken">Function <em>buyToken(…)</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Function <em>buyToken(…)</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#function-hasended">Function <em>hasEnded()</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#function-finalization">Function <em>finalization()</em></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Coding style</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#constructor">Constructor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#order-of-functions">Order of functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Function <em>buyToken(…)</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#function-setteamwalletaddress">Function <em>setTeamWalletAddress(…)</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Doc comments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#source-odemtoken-sol">Source ODEMToken.sol</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#no-need-for-code-review">No Need for Code Review</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#source-teamandadvisorsallocation-sol">Source TeamAndAdvisorsAllocation.sol</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Major Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Minor Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Notes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#function-addteamandadvisorsallocation">Function <em>addTeamAndAdvisorsAllocation(…)</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#function-unlock">Function <em>unlock()</em></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Coding style</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#assert-vs-require">Assert vs require</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#contract-naming">Contract Naming</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#constant-totalteamandadvisorsallocation">Constant <em>totalTeamAndAdvisorsAllocation</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#variable-canselfdestruct">Variable <em>canSelfDestruct</em></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">Function <em>addTeamAndAdvisorsAllocation(…)</em></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testscenarios.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conclusion.html">Conclusion</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ODEM ICO Audit</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Code Review</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/codereview.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="code-review">
+<h1>Code Review<a class="headerlink" href="#code-review" title="Permalink to this headline">¶</a></h1>
+<p>An essential part of an audit is the code review.</p>
+<p>The aim is to identify possible issues at that may constitute a risk to
+parts of or the whole project by investigating carefully the code from its
+overall global dependency structure down to single lines of code.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There was no code review of <em>OpenZeppelin</em>’s <em>Solidity</em> framework itself
+as it is supposed to have been thoroughly audited already.</p>
+</div>
+<div class="section" id="methodology">
+<h2>Methodology<a class="headerlink" href="#methodology" title="Permalink to this headline">¶</a></h2>
+<p>Issues were categorized in one of three classes:</p>
+<dl class="docutils">
+<dt><strong>Major issues</strong></dt>
+<dd>are real show stoppers and must be fixed before production deployment.
+They jeopardize the project due to risk of loosing funds or driving
+the contracts unusable.</dd>
+<dt><strong>Minor issues</strong></dt>
+<dd>are rather annoyances, but don’t compromise the project.
+They may make a non-critical function useless or decrease the user
+experience.</dd>
+<dt><strong>Notes</strong></dt>
+<dd>are no issues. Superfluous operations, missing events, or wrong
+values in otherwise unused variables fall into this category.</dd>
+</dl>
+<p>To categorize found issues the following risk matrix is used
+where the columns represent probability, and rows represent severity
+of an issue.</p>
+<table border="1" class="docutils" id="id13">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Risk Matrix</span><a class="headerlink" href="#id13" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub">&#160;</th>
+<th class="head">No Impact</th>
+<th class="head">Negligible</th>
+<th class="head">Marginal</th>
+<th class="head">Critical</th>
+<th class="head">Catastrophic</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub">Certain</th>
+<td>Note</td>
+<td>Minor</td>
+<td>Major</td>
+<td>Major</td>
+<td>Major</td>
+</tr>
+<tr class="row-odd"><th class="stub">Likely</th>
+<td>Note</td>
+<td>Minor</td>
+<td>Minor</td>
+<td>Major</td>
+<td>Major</td>
+</tr>
+<tr class="row-even"><th class="stub">Possibly</th>
+<td>Note</td>
+<td>Note</td>
+<td>Minor</td>
+<td>Major</td>
+<td>Major</td>
+</tr>
+<tr class="row-odd"><th class="stub">Unlikely</th>
+<td>Note</td>
+<td>Note</td>
+<td>Minor</td>
+<td>Minor</td>
+<td>Major</td>
+</tr>
+<tr class="row-even"><th class="stub">Rare</th>
+<td>Note</td>
+<td>Note</td>
+<td>Note</td>
+<td>Minor</td>
+<td>Major</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="results">
+<h2>Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h2>
+<p><strong>No major or minor issues were found.</strong></p>
+<p>The overall code is easy to read, its structure is easy to follow,
+and its intention is easy to grasp.</p>
+<p>Nearly all written code conforms <em>Solidity</em>’s style guide.
+All sources – with the exception of <em>Whitelist</em>, which is a very simple
+and self-explaining contract – are well documented.</p>
+<p>All arithmetic operations are carried out by the well-known SafeMath library.
+There are no deep nested code dependency trees and no intertwined code paths.</p>
+<p>The extensive usage of <em>OpenZeppelin</em>’s <em>Solidity</em> framework is a good
+practice to increase the overall code robustness by reusing a well-established
+smart contract code base without reinventing the wheel.</p>
+</div>
+<div class="section" id="known-attacks">
+<h2>Known Attacks<a class="headerlink" href="#known-attacks" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="reentrancy-attack">
+<h3>Reentrancy attack<a class="headerlink" href="#reentrancy-attack" title="Permalink to this headline">¶</a></h3>
+<p>This attack consists on recursively calling the <code class="code sol docutils literal"><span class="pre">call.value()</span></code> method
+in an <em>ERC20</em> token to extract the ether stored on the contract if the user is
+not updating the balance of the sender before sending the ether.</p>
+<p>See: <a class="reference external" href="https://medium.com/&#64;gus_tavo_guim/reentrancy-attack-on-smart-contracts-how-to-identify-the-exploitable-and-an-example-of-an-attack-4470a2d8dfe4">more information on reentry</a></p>
+<p>Not affected as there are no external calls to unknown addresses.</p>
+</div>
+<div class="section" id="overflows-attacks">
+<h3>Overflows attacks<a class="headerlink" href="#overflows-attacks" title="Permalink to this headline">¶</a></h3>
+<p>An overflow happens when the result of an arithmetic operation on a variable
+exceeds the variable’s type limit.</p>
+<p>See: <a class="reference external" href="https://en.wikipedia.org/wiki/Integer_overflow">more information on overflow</a></p>
+<p>Not affected, as all arithmetic operations are carried by the SafeMath library.</p>
+</div>
+<div class="section" id="short-address-attack">
+<h3>Short address attack<a class="headerlink" href="#short-address-attack" title="Permalink to this headline">¶</a></h3>
+<p>This attack is based on providing a too short (less than 20 bytes) address when
+calling a contract function and thus shifting subsequent parameters to the left.</p>
+<p>See: <a class="reference external" href="https://blog.golemproject.net/how-to-find-10m-by-just-reading-blockchain-6ae9d39fcd95?gi=ff4e7a5520b7/">more information on short address</a></p>
+<p>Not affected, as all third-party callable functions either don’t have address
+parameters or no other parameters beside a single address.</p>
+</div>
+</div>
+<div class="section" id="source-whitelist-sol">
+<h2>Source Whitelist.sol<a class="headerlink" href="#source-whitelist-sol" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="major-issues">
+<h3>Major issues<a class="headerlink" href="#major-issues" title="Permalink to this headline">¶</a></h3>
+<p><em>None</em></p>
+</div>
+<div class="section" id="minor-issues">
+<h3>Minor issues<a class="headerlink" href="#minor-issues" title="Permalink to this headline">¶</a></h3>
+<p><em>None</em></p>
+</div>
+<div class="section" id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="functions-addtowhitelist-and-removefromwhitelist">
+<h4>Functions <em>addToWhitelist(…)</em> and <em>removeFromWhitelist(…)</em><a class="headerlink" href="#functions-addtowhitelist-and-removefromwhitelist" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="docutils">
+<colgroup>
+<col width="55%" />
+<col width="45%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Propability</td>
+<td>Certain</td>
+</tr>
+<tr class="row-even"><td>Impact</td>
+<td>No Impact</td>
+</tr>
+</tbody>
+</table>
+<p>The functions <code class="code sol docutils literal"><span class="pre">addToWhitelist</span></code> and <code class="code sol docutils literal"><span class="pre">removeFromWhitelist</span></code> don’t pay
+attention to if a given account address was already whitelisted or not.</p>
+<p>This has no impact on the desired functionality – providing a mutable set of
+whitelisted addresses – but adds log entries for the event
+<code class="code sol docutils literal"><span class="pre">WhitelistUpdated</span></code> even when an update didn’t happen actually.</p>
+<p><strong>Proposal:</strong>
+Add an additional test and ignore addresses that were/weren’t already
+whitelisted.</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">addToWhitelist</span><span class="p">(</span><span class="kt">address</span><span class="p">[]</span> <span class="nx">_addresses</span><span class="p">)</span> <span class="kr">public</span> <span class="nx">onlyOwner</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">uint256</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">_addresses</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+<span class="hll">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">allowedAddresses</span><span class="p">[</span><span class="nx">_addresses</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
+</span>            <span class="nx">allowedAddresses</span><span class="p">[</span><span class="nx">_addresses</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="nx">WhitelistUpdated</span><span class="p">(</span><span class="kp">now</span><span class="p">,</span> <span class="s2">&quot;Added&quot;</span><span class="p">,</span> <span class="nx">_addresses</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">removeFromWhitelist</span><span class="p">(</span><span class="kt">address</span><span class="p">[]</span> <span class="nx">_addresses</span><span class="p">)</span> <span class="kr">public</span> <span class="nx">onlyOwner</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">uint256</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">_addresses</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+<span class="hll">        <span class="k">if</span> <span class="p">(</span><span class="nx">allowedAddresses</span><span class="p">[</span><span class="nx">_addresses</span><span class="p">[</span><span class="nx">i</span><span class="p">]])</span> <span class="p">{</span>
+</span>            <span class="nx">allowedAddresses</span><span class="p">[</span><span class="nx">_addresses</span><span class="p">[</span><span class="nx">i</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="nx">WhitelistUpdated</span><span class="p">(</span><span class="kp">now</span><span class="p">,</span> <span class="s2">&quot;Removed&quot;</span><span class="p">,</span> <span class="nx">_addresses</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The proposed code may slightly increase the gas usage when executed due to
+the additional state variable access.</p>
+<p><strong>Final thoughts:</strong>
+These functions are called by the <em>Whitelist</em> administrator only who may
+track off-chain which investors are already whitelisted, or do a prior check
+by calling <code class="code sol docutils literal"><span class="pre">isWhitelisted</span></code>.</p>
+</div>
+</div>
+<div class="section" id="coding-style">
+<h3>Coding style<a class="headerlink" href="#coding-style" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="doc-comments">
+<h4>Doc comments<a class="headerlink" href="#doc-comments" title="Permalink to this headline">¶</a></h4>
+<p>There are no comments at all.</p>
+</div>
+</div>
+</div>
+<div class="section" id="source-odemcrowdsale-sol">
+<h2>Source ODEMCrowdsale.sol<a class="headerlink" href="#source-odemcrowdsale-sol" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Major issues<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p><em>None</em></p>
+</div>
+<div class="section" id="id2">
+<h3>Minor issues<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p><em>None</em></p>
+</div>
+<div class="section" id="id3">
+<h3>Notes<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="function-buytoken">
+<h4>Function <em>buyToken(…)</em><a class="headerlink" href="#function-buytoken" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="docutils">
+<colgroup>
+<col width="52%" />
+<col width="48%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Probability</td>
+<td>Possible</td>
+</tr>
+<tr class="row-even"><td>Severity</td>
+<td>Negligible</td>
+</tr>
+</tbody>
+</table>
+<p>The mapping <code class="code sol docutils literal"><span class="pre">trackBuyersPurchases</span></code> will contain a wrong value for the
+remainder investor (whose purchase will make the total token supply exceed
+the cap), as he purchased less tokens than noted there.</p>
+<p><strong>Proposal:</strong>
+Put the update of <code class="code sol docutils literal"><span class="pre">trackBuyersPurchases</span></code> after remainder logic.</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">buyTokens</span><span class="p">(</span><span class="kt">address</span> <span class="nx">beneficiary</span><span class="p">)</span>
+    <span class="p">...</span>
+    <span class="c1">//remainder logic</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">totalSupply</span><span class="p">().</span><span class="nx">add</span><span class="p">(</span><span class="nx">tokens</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nx">TOTAL_TOKENS_FOR_CROWDSALE</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">TOTAL_TOKENS_FOR_CROWDSALE</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">totalSupply</span><span class="p">());</span>
+        <span class="nx">weiAmount</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">div</span><span class="p">(</span><span class="nx">rate</span><span class="p">);</span>
+
+        <span class="c1">// save info so as to refund purchaser after crowdsale&#39;s end</span>
+        <span class="nx">remainderPurchaser</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">sender</span><span class="p">;</span>
+        <span class="nx">remainderAmount</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">weiAmount</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="hll">    <span class="nx">trackBuyersPurchases</span><span class="p">[</span><span class="nx">beneficiary</span><span class="p">]</span> <span class="o">=</span> <span class="nx">trackBuyersPurchases</span><span class="p">[</span><span class="nx">beneficiary</span><span class="p">].</span><span class="nx">add</span><span class="p">(</span><span class="nx">tokens</span><span class="p">);</span>
+</span>    <span class="p">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h4>Function <em>buyToken(…)</em><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="docutils">
+<colgroup>
+<col width="52%" />
+<col width="48%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Probability</td>
+<td>Possible</td>
+</tr>
+<tr class="row-even"><td>Severity</td>
+<td>Negligible</td>
+</tr>
+</tbody>
+</table>
+<p>If the amount of remaining tokens
+(<code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_FOR_CROWDSALE</span> <span class="pre">-</span> <span class="pre">token.totalSupply</span></code>) is not a multiple
+of <code class="code sol docutils literal"><span class="pre">rate</span></code>, the remainder investor (whose purchase will make the total
+token supply exceed the cap) will receive a tiny amount of tokens more than
+paid for.</p>
+<p>It must be pointed out, that the worth of these additional tokens is less
+than 1 wei (= 10:sup:<cite>-18</cite> ether).</p>
+<p><strong>Simplified Example:</strong></p>
+<p>Assumptions</p>
+<blockquote>
+<div><ul class="simple">
+<li>rate is 10 tokens per wei</li>
+<li>remaining amount is 26 tokens</li>
+<li>investor wants to buy for 5 wei</li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple">
+<li>Usually, the investor would receive 5 wei × 10 = 50 tokens.</li>
+<li>As this would exceed the total cap, he merely receives the remaining 26
+tokens.</li>
+<li>Their worth in wei is calculated by integer division: int(26/10) = 2 wei.</li>
+<li>After crowdsale end, the investor will be refunded: 5 wei - 2 wei = 3 wei.</li>
+</ol>
+<p>The investor actually paid 2 wei and received 26 tokens, that is 6 more than
+he paid for.</p>
+<p><strong>Proposal:</strong>
+Calculate the correct amount of bought tokens by</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">buyTokens</span><span class="p">(</span><span class="kt">address</span> <span class="nx">beneficiary</span><span class="p">)</span>
+    <span class="p">...</span>
+    <span class="c1">//remainder logic</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">totalSupply</span><span class="p">().</span><span class="nx">add</span><span class="p">(</span><span class="nx">tokens</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nx">TOTAL_TOKENS_FOR_CROWDSALE</span><span class="p">)</span> <span class="p">{</span>
+<span class="hll">        <span class="nx">weiAmount</span> <span class="o">=</span> <span class="nx">TOTAL_TOKENS_FOR_CROWDSALE</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">totalSupply</span><span class="p">()).</span><span class="nx">div</span><span class="p">(</span><span class="nx">rate</span><span class="p">);</span>
+</span><span class="hll">        <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">weiAmount</span><span class="p">.</span><span class="nx">mul</span><span class="p">(</span><span class="nx">rate</span><span class="p">);</span>
+</span>
+        <span class="c1">// save info so as to refund purchaser after crowdsale&#39;s end</span>
+        <span class="nx">remainderPurchaser</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">sender</span><span class="p">;</span>
+        <span class="nx">remainderAmount</span> <span class="o">=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">weiAmount</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="p">...</span>
+</pre></div>
+</div>
+<p>and account for remaining token amount being below rate in</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">hasEnded</span><span class="p">()</span> <span class="kr">public</span> <span class="kr">view</span> <span class="kr">returns</span> <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
+<span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="nx">token</span><span class="p">.</span><span class="nx">totalSupply</span><span class="p">()</span> <span class="o">&gt;</span> <span class="nx">TOTAL_TOKENS_FOR_CROWDSALE</span> <span class="o">-</span> <span class="nx">rate</span><span class="p">)</span> <span class="p">{</span>
+</span>        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="p">...</span>
+</pre></div>
+</div>
+<p><strong>Final thoughts:</strong>
+Leave the code as it is, as the additional gas cost of an exact solution
+outreaches the wasted token’s worth by several orders of magnitude.</p>
+</div>
+<div class="section" id="function-hasended">
+<h4>Function <em>hasEnded()</em><a class="headerlink" href="#function-hasended" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="docutils">
+<colgroup>
+<col width="55%" />
+<col width="45%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Probability</td>
+<td>Certain</td>
+</tr>
+<tr class="row-even"><td>Severity</td>
+<td>No Impact</td>
+</tr>
+</tbody>
+</table>
+<p>The test for if the crowdsale has ended, i.e. is ready to be finalized, is
+implemented in a way that it first performs an access to an external state
+variable <code class="code sol docutils literal"><span class="pre">token.totalSupply</span></code> and then accesses internal state via
+<code class="code sol docutils literal"><span class="pre">super.hasEnded()</span></code>.</p>
+<p>Provided that fulfillment of both test cases are equally probable (in a lazy
+evaluation environment) one could gain a tiny reduction in gas usage by first
+doing the cheaper test.</p>
+<p><strong>Proposal:</strong>
+Simplify and reorder the tests. Lazy evaluation of binary <em>OR</em> operator won’t
+test the second condition if the first is met already.</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">hasEnded</span><span class="p">()</span> <span class="kr">public</span> <span class="kr">view</span> <span class="kr">returns</span> <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kr">super</span><span class="p">.</span><span class="nx">hasEnded</span><span class="p">()</span> <span class="o">||</span> <span class="nx">token</span><span class="p">.</span><span class="nx">totalSupply</span><span class="p">()</span> <span class="o">==</span> <span class="nx">TOTAL_TOKENS_FOR_CROWDSALE</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Final thoughts:</strong>
+As this function is likely to be called only once when <code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code>’s
+owner attempts to finalize the crowdsale, the gas reduction is negligible, and
+the code readability is high already.</p>
+</div>
+<div class="section" id="function-finalization">
+<h4>Function <em>finalization()</em><a class="headerlink" href="#function-finalization" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="docutils">
+<colgroup>
+<col width="55%" />
+<col width="45%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Probability</td>
+<td>Certain</td>
+</tr>
+<tr class="row-even"><td>Severity</td>
+<td>No Impact</td>
+</tr>
+</tbody>
+</table>
+<p>The external state variable <code class="code sol docutils literal"><span class="pre">token.totalSupply()</span></code> is accessed twice
+although its value doesn’t change between those calls.</p>
+<p>To reduce gas cost consider buffering the value in a local variable first.</p>
+<p><strong>Proposal:</strong>
+Retrieve the total tokens supply only once.</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">finalization</span><span class="p">()</span> <span class="kr">internal</span> <span class="p">{</span>
+    <span class="c1">// This must have been set manually prior to finalize().</span>
+    <span class="nb">require</span><span class="p">(</span><span class="nx">teamAndAdvisorsAllocation</span> <span class="o">!=</span> <span class="kt">address</span><span class="p">(</span><span class="mh">0x0</span><span class="p">));</span>
+
+    <span class="c1">// final minting</span>
+    <span class="nx">token</span><span class="p">.</span><span class="nx">mint</span><span class="p">(</span><span class="nx">teamAndAdvisorsAllocation</span><span class="p">,</span> <span class="nx">VESTED_TEAM_ADVISORS_SHARE</span><span class="p">);</span>
+    <span class="nx">token</span><span class="p">.</span><span class="nx">mint</span><span class="p">(</span><span class="nx">wallet</span><span class="p">,</span> <span class="nx">NON_VESTED_TEAM_ADVISORS_SHARE</span><span class="p">);</span>
+    <span class="nx">token</span><span class="p">.</span><span class="nx">mint</span><span class="p">(</span><span class="nx">wallet</span><span class="p">,</span> <span class="nx">COMPANY_SHARE</span><span class="p">);</span>
+    <span class="nx">token</span><span class="p">.</span><span class="nx">mint</span><span class="p">(</span><span class="nx">rewardWallet</span><span class="p">,</span> <span class="nx">BOUNTY_REWARD_SHARE</span><span class="p">);</span>
+
+<span class="hll">    <span class="kt">uint</span> <span class="nx">totalSupply</span> <span class="o">=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">totalSupply</span><span class="p">();</span>
+</span>
+<span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="nx">TOTAL_TOKENS_SUPPLY</span> <span class="o">&gt;</span> <span class="nx">totalSupply</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="hll">        <span class="kt">uint256</span> <span class="nx">remainingTokens</span> <span class="o">=</span> <span class="nx">TOTAL_TOKENS_SUPPLY</span><span class="p">.</span><span class="nx">sub</span><span class="p">(</span><span class="nx">totalSupply</span><span class="p">);</span>
+</span>
+        <span class="nx">token</span><span class="p">.</span><span class="nx">mint</span><span class="p">(</span><span class="nx">wallet</span><span class="p">,</span> <span class="nx">remainingTokens</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nx">token</span><span class="p">.</span><span class="nx">finishMinting</span><span class="p">();</span>
+    <span class="nx">ODEMToken</span><span class="p">(</span><span class="nx">token</span><span class="p">).</span><span class="nx">unpause</span><span class="p">();</span>
+    <span class="kr">super</span><span class="p">.</span><span class="nx">finalization</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Final thoughts:</strong>
+This function is called only once by <code class="code sol docutils literal"><span class="pre">ODMECrowdsale</span></code>’s owner.
+The gas reduction is negligible, and the code readability is high already,</p>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>Coding style<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="constructor">
+<h4>Constructor<a class="headerlink" href="#constructor" title="Permalink to this headline">¶</a></h4>
+<p>For long function declarations, it is recommended to drop each argument onto
+it’s own line at the same indentation level as the function body. The closing
+parenthesis and opening bracket should be placed on their own line as well at
+the same indentation level as the function declaration.</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">ODEMCrowdsale</span><span class="p">(</span>
+    <span class="kt">uint256</span> <span class="nx">_startTime</span><span class="p">,</span>
+    <span class="kt">uint256</span> <span class="nx">_endTime</span><span class="p">,</span>
+    <span class="kt">address</span> <span class="nx">_whitelist</span><span class="p">,</span>
+    <span class="kt">uint256</span> <span class="nx">_rate</span><span class="p">,</span>
+    <span class="kt">address</span> <span class="nx">_wallet</span><span class="p">,</span>
+    <span class="kt">address</span> <span class="nx">_rewardWallet</span>
+<span class="p">)</span>
+    <span class="kr">public</span>
+    <span class="nx">FinalizableCrowdsale</span><span class="p">()</span>
+    <span class="nx">Crowdsale</span><span class="p">(</span><span class="nx">_startTime</span><span class="p">,</span> <span class="nx">_endTime</span><span class="p">,</span> <span class="nx">_rate</span><span class="p">,</span> <span class="nx">_wallet</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="p">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="order-of-functions">
+<h4>Order of functions<a class="headerlink" href="#order-of-functions" title="Permalink to this headline">¶</a></h4>
+<p>Functions should be grouped according to their visibility and ordered</p>
+<blockquote>
+<div><ul class="simple">
+<li>constructor</li>
+<li>fallback function (if exists)</li>
+<li>external</li>
+<li>public</li>
+<li>internal</li>
+<li>private</li>
+</ul>
+</div></blockquote>
+<p><strong>Proposal:</strong>
+The public function <code class="code sol docutils literal"><span class="pre">setTeamWalletAddress(…)</span></code> should appear before
+the internal function <code class="code sol docutils literal"><span class="pre">createTokenContract()</span></code>.</p>
+</div>
+<div class="section" id="id6">
+<h4>Function <em>buyToken(…)</em><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="code sol docutils literal"><span class="pre">buyTokens</span></code> function ensures that token purchaser and beneficiary
+are the same:</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="nb">require</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">sender</span> <span class="o">==</span> <span class="nx">beneficiary</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In function body code both variables are used interchangeably.</p>
+<p><strong>Proposal:</strong>
+To increase code readability one should consider using only one of</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="code sol docutils literal"><span class="pre">msg.sender</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">beneficiary</span></code></li>
+</ul>
+</div></blockquote>
+<p>within function code.</p>
+</div>
+<div class="section" id="function-setteamwalletaddress">
+<h4>Function <em>setTeamWalletAddress(…)</em><a class="headerlink" href="#function-setteamwalletaddress" title="Permalink to this headline">¶</a></h4>
+<p>Different namings for the same thing should be avoided:</p>
+<ul class="simple">
+<li><code class="code sol docutils literal"><span class="pre">setTeamWalletAddress</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">teamAndAdvisorsAllocation</span></code></li>
+</ul>
+<p>A single terminus, either “team wallet” or “team and advisors allocation”
+would increase code readability</p>
+<p><strong>Proposal:</strong>
+Rename this function to <code class="code sol docutils literal"><span class="pre">setTeamAndAdvisorsAllocationAddress(…)</span></code>.</p>
+</div>
+<div class="section" id="id7">
+<h4>Doc comments<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<p>The heading comment of function <code class="code sol docutils literal"><span class="pre">hasEnded()</span></code> is not a doc comment.</p>
+</div>
+</div>
+</div>
+<div class="section" id="source-odemtoken-sol">
+<h2>Source ODEMToken.sol<a class="headerlink" href="#source-odemtoken-sol" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="no-need-for-code-review">
+<h3>No Need for Code Review<a class="headerlink" href="#no-need-for-code-review" title="Permalink to this headline">¶</a></h3>
+<p>The token contract implementation is completely done by <em>OpenZeppelin</em>’s
+base contracts</p>
+<ul class="simple">
+<li><code class="code sol docutils literal"><span class="pre">PausableToken</span></code></li>
+<li><code class="code sol docutils literal"><span class="pre">MintableToken</span></code></li>
+</ul>
+<p>There are no custom code extensions besides definition of public constants</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kt">string</span> <span class="kr">public</span> <span class="kr">constant</span> <span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;ODEM Token&quot;</span><span class="p">;</span>
+<span class="kt">string</span> <span class="kr">public</span> <span class="kr">constant</span> <span class="nx">symbol</span> <span class="o">=</span> <span class="s2">&quot;ODEM&quot;</span><span class="p">;</span>
+<span class="kt">uint8</span> <span class="kr">public</span> <span class="kr">constant</span> <span class="nx">decimals</span> <span class="o">=</span> <span class="mi">18</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>As the token contract instance is meant to be created and owned by an
+<code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code> instance during its whole lifetime, and there’s no
+mechanism implemented in the latter to transfer the ownership, the
+<code class="code sol docutils literal"><span class="pre">ODEMToken</span></code>’s behavior regarding minting and pausing is fully controlled
+by the <code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code> instance.</p>
+</div>
+</div>
+<div class="section" id="source-teamandadvisorsallocation-sol">
+<h2>Source TeamAndAdvisorsAllocation.sol<a class="headerlink" href="#source-teamandadvisorsallocation-sol" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h3>Major Issues<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p><em>None</em></p>
+</div>
+<div class="section" id="id9">
+<h3>Minor Issues<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p><em>None</em></p>
+</div>
+<div class="section" id="id10">
+<h3>Notes<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="function-addteamandadvisorsallocation">
+<h4>Function <em>addTeamAndAdvisorsAllocation(…)</em><a class="headerlink" href="#function-addteamandadvisorsallocation" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="docutils">
+<colgroup>
+<col width="58%" />
+<col width="42%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Probability</td>
+<td>Rare</td>
+</tr>
+<tr class="row-even"><td>Severity</td>
+<td>Marginal</td>
+</tr>
+</tbody>
+</table>
+<p>The token allocation for a single team member can be set only once.
+But as long as the total amount of allocated tokens <code class="code sol docutils literal"><span class="pre">allocatedTokens</span></code>
+is below the cap <code class="code sol docutils literal"><span class="pre">totalTeamAndAdvisorsAllocation</span></code>, a team members
+allocation can be set again after he/she unlocked his/her share – again
+only once until next unlock, etc.</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="p">...</span>
+<span class="nb">assert</span><span class="p">(</span><span class="nx">teamAndAdvisorsAllocations</span><span class="p">[</span><span class="nx">teamOrAdvisorsAddress</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span> <span class="c1">// can only add once.</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+<p>The only purpose imaginable for this constraints is to increase trust of team
+members, i.e. that the contract owner is not able to change one’s allocation
+once set.</p>
+<p><strong>Proposal:</strong>
+If trust is an issue here, an event should be added, too:</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kd">event</span> <span class="nx">TeamAndAdvisorAllocationAdded</span><span class="p">(</span><span class="kt">address</span> <span class="kt">indexed</span> <span class="nx">beneficiary</span><span class="p">,</span>
+                                    <span class="kt">uint256</span> <span class="nx">amount</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>Final thoughts:</strong>
+As team members and advisors have to trust the contracts’s owner anyway,
+the mentioned constraint can be removed.</p>
+</div>
+<div class="section" id="function-unlock">
+<h4>Function <em>unlock()</em><a class="headerlink" href="#function-unlock" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="docutils">
+<colgroup>
+<col width="52%" />
+<col width="48%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Probability</td>
+<td>Unlikely</td>
+</tr>
+<tr class="row-even"><td>Severity</td>
+<td>Negligible</td>
+</tr>
+</tbody>
+</table>
+<p>The only way for the contract owner to know if all team members have unlocked
+their shares is either:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">to check if</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span>  <span class="nx">ODEMCrowdsale</span><span class="p">.</span><span class="nx">VESTED_TEAM_ADVISORS_SHARE</span>
+<span class="o">-</span> <span class="nx">ODEMToken</span><span class="p">.</span><span class="nx">balanceOf</span><span class="p">(</span><span class="nx">TeamAndAdvisorsAllocation</span><span class="p">)</span>
+<span class="o">=</span> <span class="nx">TeamAndAdvisorsAllocation</span><span class="p">.</span><span class="nx">allocatedTokens</span>
+</pre></div>
+</div>
+<p>which won’t work if some tokens where transfered to the
+<code class="code sol docutils literal"><span class="pre">TeamAndAdvisorsAllocation</span></code> instance by a third party,</p>
+</li>
+<li><p class="first">to keep an off-chain list of all team members or look into the
+transaction history and iterate over <code class="code sol docutils literal"><span class="pre">teamAndAdvisorsAllocations</span></code>.</p>
+</li>
+</ul>
+</div></blockquote>
+<p>Prior to killing the contract it may be desirable to know if there are still
+some shares left.</p>
+<p><strong>Proposal:</strong>
+Introduce a public state variable tracking the total amount of allocated
+tokens which weren’t unlocked by team members.</p>
+</div>
+</div>
+<div class="section" id="id11">
+<h3>Coding style<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="assert-vs-require">
+<h4>Assert vs require<a class="headerlink" href="#assert-vs-require" title="Permalink to this headline">¶</a></h4>
+<p>Use <code class="code sol docutils literal"><span class="pre">require</span></code> to validate state conditions prior to executing state
+changing operations, and <code class="code sol docutils literal"><span class="pre">assert</span></code> to validate contract state after making
+changes.</p>
+<p><strong>Proposal</strong>
+Use <code class="code sol docutils literal"><span class="pre">require</span></code> instead <code class="code sol docutils literal"><span class="pre">assert</span></code> at the beginning of these functions:</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">addTeamAndAdvisorsAllocation</span><span class="p">(</span><span class="kt">address</span> <span class="nx">teamOrAdvisorsAddress</span><span class="p">,</span> <span class="kt">uint256</span> <span class="nx">allocationValue</span><span class="p">)</span>
+    <span class="kr">external</span>
+    <span class="nx">onlyOwner</span>
+    <span class="kr">returns</span><span class="p">(</span><span class="kt">bool</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="nb">require</span><span class="p">(</span><span class="nx">teamAndAdvisorsAllocations</span><span class="p">[</span><span class="nx">teamOrAdvisorsAddress</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span> <span class="c1">// can only add once.</span>
+</span>    <span class="p">...</span>
+</pre></div>
+</div>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">unlock</span><span class="p">()</span> <span class="kr">external</span> <span class="p">{</span>
+<span class="hll">    <span class="nb">require</span><span class="p">(</span><span class="kp">now</span> <span class="o">&gt;=</span> <span class="nx">unlockedAt</span><span class="p">);</span>
+</span>    <span class="p">...</span>
+</pre></div>
+</div>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">kill</span><span class="p">()</span> <span class="kr">public</span> <span class="nx">onlyOwner</span> <span class="p">{</span>
+<span class="hll">    <span class="nb">require</span><span class="p">(</span><span class="kp">now</span> <span class="o">&gt;=</span> <span class="nx">canSelfDestruct</span><span class="p">);</span>
+</span>    <span class="p">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="contract-naming">
+<h4>Contract Naming<a class="headerlink" href="#contract-naming" title="Permalink to this headline">¶</a></h4>
+<p>Naming a function <code class="code sol docutils literal"><span class="pre">addTeamAndAdvisorsAllocation</span></code> which adds an entry to
+the global mapping <code class="code sol docutils literal"><span class="pre">teamAndAdvisorsAllocations</span></code> is fine by itself as it
+implies a “team and advisor allocation” to refer to a single entry.</p>
+<p>But thus the contract name is misleading.</p>
+<p><strong>Proposal:</strong>
+Rename the contract to plural form by adding an “s”:</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="kd">contract</span> <span class="nx">TeamAndAdvisorsAllocations</span> <span class="kr">is</span> <span class="nx">Ownable</span> <span class="p">{</span>
+    <span class="p">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="constant-totalteamandadvisorsallocation">
+<h4>Constant <em>totalTeamAndAdvisorsAllocation</em><a class="headerlink" href="#constant-totalteamandadvisorsallocation" title="Permalink to this headline">¶</a></h4>
+<p>The state variable <code class="code sol docutils literal"><span class="pre">totalTeamAndAdvisorsAllocation</span></code> looks like a constant.</p>
+<p><strong>Proposal:</strong>
+Consider renaming it and placing it above state variables.</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span><span class="hll"><span class="kt">uint256</span> <span class="kr">private</span> <span class="kr">constant</span> <span class="nx">TOTAL_TEAM_AND_ADVISORS_ALLOCATION</span> <span class="o">=</span> <span class="mf">38763636e18</span><span class="p">;</span> <span class="c1">// 38 mm</span>
+</span>
+<span class="kt">uint256</span> <span class="kr">public</span> <span class="nx">unlockedAt</span><span class="p">;</span>
+<span class="kt">uint256</span> <span class="kr">public</span> <span class="nx">canSelfDestruct</span><span class="p">;</span>
+<span class="kt">uint256</span> <span class="kr">public</span> <span class="nx">tokensCreated</span><span class="p">;</span>
+<span class="kt">uint256</span> <span class="kr">public</span> <span class="nx">allocatedTokens</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="variable-canselfdestruct">
+<h4>Variable <em>canSelfDestruct</em><a class="headerlink" href="#variable-canselfdestruct" title="Permalink to this headline">¶</a></h4>
+<p>The state variable name <code class="code sol docutils literal"><span class="pre">canSelfDestruct</span></code> implies some boolean term.
+Actually its a timestamp.</p>
+<p><strong>Proposal:</strong>
+Consider renaming it to something else, e.g. <code class="code sol docutils literal"><span class="pre">destructibleAt</span></code> or
+<code class="code sol docutils literal"><span class="pre">destructibleAfter</span></code>.</p>
+</div>
+<div class="section" id="id12">
+<h4>Function <em>addTeamAndAdvisorsAllocation(…)</em><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<p>Unnecessary return value.
+A call to this function will always return <code class="code sol docutils literal"><span class="pre">true</span></code> if not rejected.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="testscenarios.html" class="btn btn-neutral float-right" title="Testing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="functionality.html" class="btn btn-neutral" title="Functionality" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

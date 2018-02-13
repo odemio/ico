@@ -1,0 +1,744 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Functionality &mdash; ODEM ICO Audit 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ODEM ICO Audit 1 documentation" href="index.html"/>
+        <link rel="next" title="Code Review" href="codereview.html"/>
+        <link rel="prev" title="Introduction" href="introduction.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ODEM ICO Audit
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Functionality</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#contract-structure">Contract Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deployment-order">Deployment Order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#whitelist">Whitelist</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#features">Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#accounts-roles">Accounts/Roles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lifetime">Lifetime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constraints">Constraints</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#odemcrowdsale">ODEMCrowdsale</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#constants">Constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Accounts/Roles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Lifetime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Constraints</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#odemtoken">ODEMToken</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Accounts/Roles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Lifetime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Constraints</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#teamandadvisorallocation">TeamAndAdvisorAllocation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Accounts/Roles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Lifetime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">Constraints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="codereview.html">Code Review</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testscenarios.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conclusion.html">Conclusion</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ODEM ICO Audit</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Functionality</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/functionality.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="functionality">
+<h1>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h1>
+<p>This chapter describes the overall structure and the functionality in detail
+of the contracts that constitute the <em>ODEM ICO</em> smart contract project.</p>
+<div class="section" id="contract-structure">
+<h2>Contract Structure<a class="headerlink" href="#contract-structure" title="Permalink to this headline">¶</a></h2>
+<p>The project consists of four contracts which by themselves are based on
+<em>OpenZeppelin</em>’s <em>Solidity</em> framework.</p>
+<ul class="simple">
+<li><em>Whitelist</em></li>
+<li><em>ODEMCrowdsale</em></li>
+<li><em>ODEMToken</em></li>
+<li><em>TeamAndAdvisorsAllocation</em></li>
+</ul>
+<p>All contracts in this project are assumed to be singletons, i.e. there
+will be created exactly one instance for every contract in the project.</p>
+<div class="figure">
+<img alt="_images/structure.svg" src="_images/structure.svg" /></div>
+<p><sup>Diagram of ODEM ICO contracts</sup></p>
+<p>The contract <em>TeamAndAdvisorsAllocation</em> is loosely coupled to the other
+contracts, as it’s not essential for the ICO crowdsale and token trading.
+Anytime before crowdsale finalization the crowdsale’s contract owner can
+decide replace it by another implementation or even to set a regular user
+account becoming the crowdsale instance’s <code class="code sol docutils literal"><span class="pre">teamAndAdvisorAllocation</span></code>
+address.</p>
+</div>
+<div class="section" id="deployment-order">
+<h2>Deployment Order<a class="headerlink" href="#deployment-order" title="Permalink to this headline">¶</a></h2>
+<p>The contracts must be deployed in the following order:</p>
+<ol class="arabic simple">
+<li><strong>Whitelist</strong> has to be deployed manually at first.
+Its address is needed in the next step.</li>
+<li><strong>ODEMCrowdsale</strong> has to be deployed manually after <code class="code sol docutils literal"><span class="pre">Whitelist</span></code>.
+Attention has to be payed to correct values of parameters
+sol:<cite>_startTime</cite>, <code class="code sol docutils literal"><span class="pre">_endTime</span></code>, <code class="code sol docutils literal"><span class="pre">_whitelist</span></code>, <code class="code sol docutils literal"><span class="pre">_wallet</span></code>,
+and sol:<cite>_rewardWallet</cite> as these cannot be changed after deployment.</li>
+<li><strong>ODEMToken</strong> will automatically be deployed during initialization of
+<code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code>.
+To determine the token’s address call public getter function
+<code class="code sol docutils literal"><span class="pre">token()</span></code> of the crowdsale instance.</li>
+<li><strong>TeamAndAdvisorsAllocation</strong> has to be deployed manually before
+the crowdsale gets finalized.
+As this contract will start a 182 day retention period on initialization,
+it should be deployed at the last possible moment, that is after the
+crowdsale has ended, before calling <code class="code sol docutils literal"><span class="pre">finalize()</span></code> of the crowdsale
+contract instance.</li>
+</ol>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>Before deploying <code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code> it must be assured that the
+deployed <code class="code sol docutils literal"><span class="pre">Whitelist</span></code> instance is fully functional, i.e.
+its owner can add and remove addresses and their <code class="code sol docutils literal"><span class="pre">isWhitelisted</span></code>
+status is as expected.</p>
+<p class="last"><em>Rationale:</em> the constructor of <code class="code sol docutils literal"><span class="pre">ODEMCrowdsale</span></code> will accept any
+address as its <code class="code sol docutils literal"><span class="pre">_whitelist</span></code> parameter, but the actual usage of
+<code class="code sol docutils literal"><span class="pre">Whitelist</span></code>, that is to check for if an address was whitelisted,
+doesn’t happen before the crowdsale period starts.</p>
+</div>
+</div>
+<div class="section" id="whitelist">
+<h2>Whitelist<a class="headerlink" href="#whitelist" title="Permalink to this headline">¶</a></h2>
+<p>The whitelist contract constitutes a (quite generic) mutable set of
+addresses.</p>
+<p>In context of <em>ODEMCrowdsale</em> it will contain the addresses of investors
+who are allowed to buy tokens during the crowdsale period.</p>
+<p>When creating an <em>ODEMCrowdsale</em> instance, the address of an existing
+(deployed) <em>Whitelist</em> instance has to be given.</p>
+<div class="section" id="features">
+<h3>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h3>
+<p><strong>Ownable</strong></p>
+<p>The owner if a <em>Whitelist</em> instance can transfer the ownership at any
+time to any other account.</p>
+<p><strong>Mutability</strong></p>
+<p>Addresses can be added to or removed from a <em>Whitelist</em> instance by its
+owner at any time.</p>
+</div>
+<div class="section" id="accounts-roles">
+<h3>Accounts/Roles<a class="headerlink" href="#accounts-roles" title="Permalink to this headline">¶</a></h3>
+<p><strong>Owner</strong></p>
+<p>Only the <em>Whitelist</em> instance’s owner is allowed to add/remove addresses
+to/from the whitelist.</p>
+<p>Initially, this will be the account who deployed the <em>Whitelist</em>
+instance in the first place, but the ownership can be transferred later
+by the current owner to any other account.</p>
+<p>The owner doesn’t need to be the same as of the <em>ODEMCrowdsale</em>
+instance.</p>
+<p><strong>Whitelisted Accounts</strong></p>
+<p>Their addresses are stored in the contract instance.</p>
+</div>
+<div class="section" id="lifetime">
+<h3>Lifetime<a class="headerlink" href="#lifetime" title="Permalink to this headline">¶</a></h3>
+<p><em>Whitelist</em>’s behavior is invariant with respect to time.</p>
+</div>
+<div class="section" id="constraints">
+<h3>Constraints<a class="headerlink" href="#constraints" title="Permalink to this headline">¶</a></h3>
+<p><strong>Adding/Removing</strong></p>
+<p>Only the owner is allowed to add or remove addresses.</p>
+<p>There are no time related restrictions on adding or removing entries,
+but the <em>ODEMCrowdsale</em> instance will read this set only during the
+crowdsale period.</p>
+</div>
+</div>
+<div class="section" id="odemcrowdsale">
+<h2>ODEMCrowdsale<a class="headerlink" href="#odemcrowdsale" title="Permalink to this headline">¶</a></h2>
+<p>The <em>ODEMCrowdsale</em> is the main contract of this project.</p>
+<p>When deployed it creates a new <em>ODEMToken</em> instance, thus becoming its
+owner.</p>
+<div class="section" id="constants">
+<h3>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h3>
+<p>The following token related constants are defined:</p>
+<ul>
+<li><p class="first"><strong>BOUNTY_REWARD_SHARE</strong></p>
+<p>= <code class="code sol docutils literal"><span class="pre">43666667e18</span></code> (~ 43.7M Tokens)</p>
+<p>Amount of tokens minted in favor of the reward wallet account on
+crowdsale finalization.</p>
+</li>
+<li><p class="first"><strong>VESTED_TEAM_ADVISORS_SHARE</strong></p>
+<p>= <code class="code sol docutils literal"><span class="pre">38763636e18</span></code> (~ 38.8M Tokens)</p>
+<p>Amount of tokens minted in favor of <em>TeamAndAdvisorAllocation</em>
+instance on crowdsale finalization.</p>
+</li>
+<li><p class="first"><strong>NON_VESTED_TEAM_ADVISORS_SHARE</strong></p>
+<p><code class="code sol docutils literal"><span class="pre">=</span> <span class="pre">5039200e18</span></code> (~ 5M Tokens)</p>
+<p>Amount of tokens minted in favor of the wallet account on crowdsale
+finalization.</p>
+</li>
+<li><p class="first"><strong>COMPANY_SHARE</strong></p>
+<p><code class="code sol docutils literal"><span class="pre">=</span> <span class="pre">71300194e18</span></code> (~ 71.3M Tokens)</p>
+<p>Amount of tokens minted in favor of the wallet account on crowdsale
+finalization.</p>
+</li>
+<li><p class="first"><strong>PRE_CROWDSALE_CAP</strong></p>
+<p><code class="code sol docutils literal"><span class="pre">=</span> <span class="pre">58200000e18</span></code> (~ 58.2M Tokens)</p>
+<p>Maximum total amount of tokens minted in favor of the private
+investors during pre-crowdsale.</p>
+</li>
+<li><p class="first"><strong>PUBLIC_CROWDSALE_CAP</strong></p>
+<p><code class="code sol docutils literal"><span class="pre">=</span> <span class="pre">180000000e18</span></code> (~ 180M Tokens)</p>
+<p>Maximum total amount of tokens bought by investors during crowdsale
+if the pre-crowdsale cap was reached.</p>
+<p>If pre-crowdsale cap was not reached, the remaining tokens can be
+bought additionally during crowdsale.</p>
+</li>
+<li><p class="first"><strong>TOTAL_TOKENS_FOR_CROWDSALE</strong></p>
+<p><code class="code sol docutils literal"><span class="pre">=</span> <span class="pre">PRE_CROWDSALE_CAP</span> <span class="pre">+</span> <span class="pre">PUBLIC_CROWDSALE_CAP</span></code> (~ 238.2M Tokens)</p>
+<p>Maximum total amount of tokens minted during pre-crowdsale and
+crowdsale.</p>
+</li>
+<li><p class="first"><strong>TOTAL_TOKENS_SUPPLY</strong></p>
+<p><code class="code sol docutils literal"><span class="pre">=</span> <span class="pre">396969697e18</span></code> (~ 397M Tokens)</p>
+<p>Total supply of tokens after finalization.</p>
+<p>Should be greater than or equal to:</p>
+<div class="highlight-solidity"><div class="highlight"><pre><span></span>  <span class="nx">BOUNTY_REWARD_SHARE</span>
+<span class="o">+</span> <span class="nx">VESTED_TEAM_ADVISORS_SHARE</span>
+<span class="o">+</span> <span class="nx">NON_VESTED_TEAM_ADVISORS_SHARE</span>
+<span class="o">+</span> <span class="nx">COMPANY_SHARE</span>
+<span class="o">+</span> <span class="nx">TOTAL_TOKENS_FOR_CROWDSALE</span>
+</pre></div>
+</div>
+<p>The remaining tokens will be minted in favor of the wallet account.</p>
+</li>
+<li><p class="first"><strong>PERSONAL_FIRST_HOUR_CAP</strong></p>
+<p>= <code class="code sol docutils literal"><span class="pre">2000000e18</span></code> (~ 2M Tokens)</p>
+<p>Maximum amount of tokens an investor can buy during the first hour
+after crowdsale start.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h3>Features<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p><strong>Ownable</strong></p>
+<p>The owner of an <em>ODEMCrowdsale</em> instance can transfer the ownership at
+any time to any other account.</p>
+<p><strong>Pausable</strong></p>
+<p>During the crowdsale (i.e. from start till end, see <em>Lifetime</em>) the sale
+of tokens to investors can be halted and continued by the
+<em>ODEMCrowdsale</em> instance’s owner.</p>
+<p>Pausing in other periods is possible but without any effects.</p>
+<p><strong>Finalizable</strong></p>
+<p>After the end of crowdsale, the <em>ODEMCrowdsale</em> instance has to be
+finalized manually (or by any off-chain automatism) to enable the free
+trade/transfer of tokens.</p>
+<p>This can be done:</p>
+<ul class="simple">
+<li>solely by the owner</li>
+<li>only after the crowdsale has ended</li>
+<li>only once</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>Accounts/Roles<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p><strong>Owner</strong></p>
+<p>The owner of an <em>ODEMCrowdsale</em> instance is the account who
+created/deployed it in the first place and can</p>
+<ul class="simple">
+<li>transfer ownership at any time to any other account</li>
+<li>adjust the (tokens per wei) rate at any time to any non-zero value</li>
+<li>mint tokens for the benefit of any private investor (in fact any
+account) as long as the total token supply will not exceed the
+pre-crowdsale cap (see <em>Constants</em>: :sol`PRE_CROWDSALE_CAP`) and the
+crowdsale has not started yet</li>
+<li>set the address of a deployed <code class="code sol docutils literal"><span class="pre">TeamAndAdvisorsAllocation</span></code> instance</li>
+<li>finalize the contract instance after the crowdsale has ended (and
+only if it wasn’t finalized already) and an address for team wallet was
+set</li>
+</ul>
+<p><strong>Wallet</strong></p>
+<p>This account (a multisig wallet) will hold the crowdsale funds.</p>
+<p>The wallet address must be given when creating a <em>ODEMCrowdsale</em>
+instance and cannot be changed afterwards.</p>
+<p>When the crowdsale is finalized, a predefined amount of tokens (see
+<em>Constants</em>: <code class="code sol docutils literal"><span class="pre">NON_VESTED_TEAM_ADVISORS_SHARE</span></code>, <code class="code sol docutils literal"><span class="pre">COMPANY_SHARE</span></code>) and
+all remaining tokens, i.e. the difference of total tokens supply to some
+constant (see <em>Constants</em>: <code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_SUPPLY</span></code>) will be minted for
+the benefit of the wallet account.</p>
+<p><strong>Reward Wallet</strong></p>
+<p>When the crowdsale is finalized, a fixed amount of tokens from the
+bounty and rewards campaign (see <em>Constants</em>: sol:<cite>BOUNTY_REWARD_SHARE</cite>)
+will be minted for the benefit of this account.</p>
+<p><strong>Private Investors</strong></p>
+<p>Before the crowdsale starts, the <em>ODEMCrowdsale</em>’s instance owner can
+mint tokens for the benefit of private investor accounts. This won’t be
+possible from the crowdsale’s start time on.</p>
+<p>The total amount of pre-crowdsale minted tokens is capped (see
+<em>Constants</em>: <code class="code sol docutils literal"><span class="pre">PRE_CROWDSALE_CAP</span></code>).</p>
+<p><strong>Regular Investors</strong></p>
+<p>Regular investors are able to purchase tokens during the crowdsale
+period, but only if the crowdsale wasn’t paused by the <em>ODEMCrowdsale</em>
+instance’s owner.</p>
+<p>Every investor is only allowed to buy tokens for the benefit of
+himself/herself, and prior to this his/her account address has to be
+whitelisted by the <em>Whitelist</em>’s instance owner.</p>
+<p>During the first hour after crowdsale start, the amount of tokens a
+single investor can buy is capped (see <em>Constants</em>:
+<code class="code sol docutils literal"><span class="pre">PERSONAL_FIRST_HOUR_CAP</span></code>), which is independent of if the investor
+already received tokens due to pre-crowdsale minting.</p>
+<p>The total amount of tokens that can be bought during crowdsale is capped
+(see <em>Constants:</em> <code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_FOR_CROWDSALE</span></code>).</p>
+<p>If the last investor tries to buy more tokens than are available, he/she
+will get the remaining ones (with respect to the cap) and his/her
+address along with the overpaid amount of ether will be stored for later
+refund. These refunds will be paid out manually.</p>
+<p><strong>Token</strong></p>
+<p>An <em>ODEMCrowdsale</em> instance will create a new <em>ODEMToken</em> instance,
+become its owner, and store its address during initialization (i.e.
+deployment).</p>
+<p>Transferring the ownership of the <em>ODEMCrowdsale</em> instance doesn’t
+affect the ownership of its assigned <em>ODEMToken</em> instance (it will
+remain the crowdsale contract instance).</p>
+</div>
+<div class="section" id="id3">
+<h3>Lifetime<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p><strong>Pre-Crowdsale</strong></p>
+<p>During initialization, i.e. deployment, of an <em>ODEMCrowdsale</em> instance,
+a paused <em>ODEMToken</em> instance will be created, and the following state
+variables will be stored:</p>
+<ul class="simple">
+<li>start and end time of crowdsale period</li>
+<li>wallet and rewardWallet addresses</li>
+<li>address of prior to this created <em>Whitelist</em> instance</li>
+<li>address of newly created <em>ODEMToken</em> instance</li>
+<li>(tokens per wei) rate</li>
+</ul>
+<p>The rate can be changed by the owner at any later point in time, the
+other state variables not.</p>
+<p>Until the start of crowdsale the owner may mint tokens (with respect to
+the given cap) for the benefit of private investors.</p>
+<p><strong>First Hour of Crowdsale</strong></p>
+<p>Within the first hour after the start of crowdsale regular investors can
+buy a per investor limited amount of tokens for themselves.</p>
+<p>Investors must be whitelisted prior to be able to purchase tokens. The
+whitelisting of an account can be done and undone at any point in time.</p>
+<p><strong>Remaining Duration of Crowdsale</strong></p>
+<p>Investors can buy tokens for themselves as long as the cap of total
+available tokens is not reached.</p>
+<p>Investors must be whitelisted prior to be able to purchase tokens. The
+whitelisting of an account can be done and undone at any point in time.</p>
+<p><strong>End of Crowdsale</strong></p>
+<p>The crowdsale ends if either the crowdsale period elapsed or all
+available tokens were sold to investors.</p>
+<p>In the latter case the crowdsale will end before its predefined end
+time.</p>
+<p><strong>Finalization</strong></p>
+<p>After end of crowdsale it has to be finalized manually by the owner.
+As prerequisite, an address of a <code class="code sol docutils literal"><span class="pre">TeamAndAdvisorsAllocation</span></code> instance
+has to be set prior to finalization.</p>
+<p>A fixed amount of token gets minted for benefit of the
+<em>TeamAndAdvisorAllocation</em> instance, the wallet and reward wallet.</p>
+<p>If the total supplied tokens is below a amount (see <em>Constants</em>:
+<code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_SUPPLY</span></code>) , the remaining tokens (i.e. the difference)
+will be minted for the benefit of the wallet account.</p>
+<p>The <em>ODEMToken</em> instance will be unpaused, so that tokens become free
+tradable/transferable.</p>
+</div>
+<div class="section" id="id4">
+<h3>Constraints<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p><strong>Amount of tokens</strong></p>
+<p>The amount of tokens minted during different periods must not exceed the
+given limits (see <em>Constants</em>).</p>
+<p><strong>Adjustment of rate</strong></p>
+<p>The (token per wei) rate must be set by the owner only. This can be done
+at any time.</p>
+<p><strong>Private Investments</strong></p>
+<p>Private investors may get tokens only before the crowdsale starts. The
+pre-crowdsale token minting can be triggered by the owner only.</p>
+<p><strong>Regular Investments</strong></p>
+<p>Investors must be whitelisted prior to be able to buy tokens. The
+beneficiary of a tokens purchase is always the purchaser (the investor)
+himself/herself.</p>
+<p>If the crowdsale was paused, no token purchase is possible.</p>
+</div>
+</div>
+<div class="section" id="odemtoken">
+<h2>ODEMToken<a class="headerlink" href="#odemtoken" title="Permalink to this headline">¶</a></h2>
+<p>An <em>ODEMToken</em> is an ERC20 compliant token contract.</p>
+<p>It isn’t meant to be deployed by itself, but an instance of it to be
+automatically created when a new <em>ODEMCrowdsale</em> instance is
+initialized. The latter will become the <em>ODEMToken</em> instance’s owner.</p>
+<p>So the following sections refer to an <em>ODEMToken</em> instance created and
+owned by an existing <em>ODEMCrowdsale</em> instance.</p>
+<div class="section" id="id5">
+<h3>Features<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p><strong>Ownable</strong></p>
+<p>The <em>ODEMToken</em> contract is <em>Ownable</em>, thus exposing a method to its
+owner for transferring the ownership to a new address. But since
+<em>ODEMCrowdsale</em> doesn’t use this feature, it will stay its <em>ODEMToken</em>’s
+owner forever.</p>
+<p><strong>Pausable</strong></p>
+<p>The trade of tokens, i.e. transfer from one account to another, of
+tokens can be halted and continued by its owner (see <em>Lifetime</em>).</p>
+<p><strong>Mintable</strong></p>
+<p>The <em>ODEMToken</em> instance’s owner is able to mint some tokens, i.e.
+create new tokens and increase any account’s token balance.</p>
+</div>
+<div class="section" id="id6">
+<h3>Accounts/Roles<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p><strong>Owner</strong></p>
+<p>When an <em>ODEMCrowdsale</em> instance is initialized, i.e. deployed, it will
+create a new <em>ODEMToken</em> instance. Hence the <em>ODEMCrowdsale</em> instance
+will own the new <em>ODEMToken</em> instance.</p>
+<p><strong>Token holders</strong></p>
+<p>The <em>ODEMToken</em> contract by itself doesn’t impose any restrictions to
+which accounts can hold tokens.</p>
+<p>But as the contract instance is meant to be created and owned by an
+<em>ODEMCrowdsale</em> instance, there are some limitations on how to get
+tokens:</p>
+<ol class="arabic simple">
+<li>Being one of the initial investors, thus getting some tokens minted
+by the <em>ODEMCrowdsale</em> instance owner before the crowdsale period
+starts (pre-crowdsale).</li>
+<li>Becoming whitelisted by the <em>ODEMWhitelist</em> instance’s owner, thus
+being allowed to purchase tokens during the crowdsale period.</li>
+<li>The predefined wallet and rewardWallet accounts will get some tokens
+at the end of crowdsale period.</li>
+<li>As a team member or an advisor one can get tokens allocated by the
+<em>TeamAndAdvisorsAllocation</em>’s instance owner, after its 182 retention
+period has ended.</li>
+<li>Being the receiver of an ERC20 compliant token transfer after the
+crowdsale has ended.</li>
+</ol>
+<p>So while the circle of token holders is limited until the crowdsale
+period ends, the <em>ODEMToken</em> is freely tradable afterwards.</p>
+</div>
+<div class="section" id="id7">
+<h3>Lifetime<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<p><strong>Paused</strong></p>
+<p>When an <em>ODEMToken</em> instance gets created by an <em>ODEMCrowdsale</em>
+instance, its state will be set paused.</p>
+<p>Token minting is possible but trade/transfer is not.</p>
+<p><strong>Unpaused</strong></p>
+<p>After the crowdsale period has ended, the <em>ODEMCrowdsale</em> instance has
+to be finalized manually (or by any off-chain automatism).</p>
+<p>This will make the <em>ODEMCrowdsale</em> instance to unpause its <em>ODEMToken</em>
+instance, thus making tokens transferable from token holders to any
+<em>Ethereum</em> accounts.</p>
+<p><em>ODEMCrowdsale</em> ensures that minting of tokens is not possible anymore.</p>
+</div>
+<div class="section" id="id8">
+<h3>Constraints<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<p>The <em>ODEMToken</em> by itself doesn’t impose any restrictions on</p>
+<ul class="simple">
+<li>when it is paused/unpaused</li>
+<li>beneficiaries of minted or transferred tokens</li>
+</ul>
+<p>as these are controlled by the owning <em>ODEMCrowdsale</em> instance.</p>
+<p><strong>Pause/Unpause</strong></p>
+<p>The pause/unpause state can be changed by the owning <em>ODEMCrowdsale</em>
+instance only.</p>
+<p><strong>Minting</strong></p>
+<p>The amount and receivers of minted tokens is controlled by the owning
+<em>ODEMCrowdsale</em> instance only.</p>
+<p><strong>Total Supply</strong></p>
+<p>The maximum total supply of tokens is controlled by the owning
+<em>ODEMCrowdsale</em> instance’s minting restrictions and won’t exceed
+<code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_FOR_CROWDSALE</span></code> (see <em>ODEMCrowdsale</em> <em>Constants</em>)
+before crowdsale finalization.</p>
+<p>After crowdsale finalization the total amount of tokens is fixed
+to <code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_SUPPLY</span></code> (see <em>ODEMCrowdsale</em> <em>Constants</em>).</p>
+</div>
+</div>
+<div class="section" id="teamandadvisorallocation">
+<h2>TeamAndAdvisorAllocation<a class="headerlink" href="#teamandadvisorallocation" title="Permalink to this headline">¶</a></h2>
+<p>A <em>TeamAndAdvisorAllocation</em> instance has to be deployed prior to
+finalization of crowdsale.
+It receives a fixed share of <em>ODEMToken</em> tokens
+(see <em>ODEMCrowdsale</em> <em>Constants</em>: <code class="code sol docutils literal"><span class="pre">VESTED_TEAM_ADVISORS_SHARE</span></code>),
+thus becoming a token holder.</p>
+<p>It allows the distribution of its tokens to team members and advisors,
+which they can transfer to their own accounts as soon as the retention
+period has expired.</p>
+<div class="section" id="id9">
+<h3>Constants<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first"><strong>totalTeamAndAdvisorsAllocation</strong> <code class="code sol docutils literal"><span class="pre">=</span> <span class="pre">38763636e18</span></code> (~ 38.8M
+Tokens)</p>
+<p>Total maximum amount of tokens team members and advisors can be
+assigned.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h3>Features<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p><strong>Retention period</strong></p>
+<p>The withdrawal of tokens is blocked for 182 days after the finalization
+of the crowdsale.</p>
+<p><strong>Destruction</strong></p>
+<p>At least 365 days after finalization of the crowdsale, this contract
+instance can be destroyed by the contract’s owner.</p>
+</div>
+<div class="section" id="id11">
+<h3>Accounts/Roles<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<p><strong>Owner</strong></p>
+<p>This contract instance will be owned by the same account which was owner
+of the creating <em>ODEMCrowdsale</em> instance at the time of its
+finalization.</p>
+<p>The owner can assign token shares to team members and advisors.</p>
+<p>One year after the creation of this contract instance the owner can
+destroy it.</p>
+<p><strong>Team Member or Advisor</strong></p>
+<p>These accounts will be assigned a share in the tokens this contract
+instance possesses.</p>
+<p>After the expire of the initial retention period, they can unlock (i.e.
+withdraw) their share in tokens, which will be transferred to their
+accounts.</p>
+</div>
+<div class="section" id="id12">
+<h3>Lifetime<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<p><strong>Retention Period</strong></p>
+<p>During the first 182 days after contract instance creation
+the token share of team members and advisors can be set, but noone will be
+able to transfer them to their own account.</p>
+<p><strong>Unlock Period</strong></p>
+<p>After the retention period of 182 days has ended, team members and
+advisors are allowed to unlock their token share, thus triggering the
+transfer to their own accounts.</p>
+<p><strong>Destruction</strong></p>
+<p>When 365 days after the contract instance creation have passed, the
+owner is allowed to destroy this contract instance.</p>
+<p>All remaining tokens of this contract instance will be transferred to
+the owner’s account. Team members and advisors who have not unlocked
+their token share will lose it.</p>
+</div>
+<div class="section" id="id13">
+<h3>Constraints<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<p><strong>Allocation</strong></p>
+<p>The amount of allocated tokens can be set for every team member or
+advisor account only once.</p>
+<p>The total amount of allocated tokens must not exceed the predefined cap
+(see <em>Constants</em>).</p>
+<p><strong>Total Supply</strong></p>
+<p>The predefined cap of allocated tokens
+<code class="code sol docutils literal"><span class="pre">totalTeamAndAdvisorsAllocation</span></code> must not be greater than the amount
+of initially minted tokens <code class="code sol docutils literal"><span class="pre">VESTED_TEAM_ADVISORS_SHARE</span></code>,
+otherwise it would be possible to allocate more tokens than available, i.e.
+some team members won’t be able to unlock their share.</p>
+<p><strong>Time Periods</strong></p>
+<p>Constraints regarding time are already described in <em>Lifetime</em>.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="codereview.html" class="btn btn-neutral float-right" title="Code Review" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="introduction.html" class="btn btn-neutral" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

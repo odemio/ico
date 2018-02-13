@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Introduction &mdash; ODEM ICO Audit 1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ODEM ICO Audit 1 documentation" href="index.html"/>
+        <link rel="next" title="Functionality" href="functionality.html"/>
+        <link rel="prev" title="Welcome to ODEM ICO Audit" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ODEM ICO Audit
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functionality.html">Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="codereview.html">Code Review</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testscenarios.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conclusion.html">Conclusion</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ODEM ICO Audit</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Introduction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/introduction.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>The <em>ODEM</em> Crowdsale is an ICO based on <a class="reference external" href="https://www.ethereum.org/">Ethereum</a> smart contracts written
+in the <a class="reference external" href="https://solidity.readthedocs.io/en/develop/">Solidity</a> programming language, starting in the middle of February
+2018.</p>
+<p>Prior to deploying this project onto the Ethereum main network, extensive
+code tests and several code audits were performed on the involved smart
+contracts.</p>
+<p>This document is a report of one of those audits and subdivided into three
+main parts.</p>
+<ol class="arabic simple">
+<li>The first part describes the overall structure of the <em>ODEM</em> contracts
+a gives a detailed description of the functionality, features and
+lifecycle of the single contracts.</li>
+<li>The second part contains the code review.
+It contains the findings after intensive reading of the projects
+source codes, comments on the coding style and thoughts about the
+vulnerability to some known attacks.</li>
+<li>The third part is about testing – which test cases were identified,
+how the tests were carried out.</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>Disclaimer</strong></p>
+<p>This audit is not a legally binding document and it doesn’t guarantee
+anything.</p>
+<p>Nevertheless it is a result of careful work done for the best.</p>
+<p class="last">That it’s just a discussion document.</p>
+</div>
+<p><strong>Version note:</strong>
+The smart contract project code was fetched from <em>Github</em>:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>URL</td>
+<td><a class="reference external" href="https://github.com/odemio/ico.git">https://github.com/odemio/ico.git</a></td>
+</tr>
+<tr class="row-even"><td>Date</td>
+<td>Feb 3, 2018, 16:42</td>
+</tr>
+<tr class="row-odd"><td>Commit</td>
+<td><code class="docutils literal"><span class="pre">42b9404431be3da972bc9b671a3b8546cdc36f81</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="functionality.html" class="btn btn-neutral float-right" title="Functionality" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to ODEM ICO Audit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

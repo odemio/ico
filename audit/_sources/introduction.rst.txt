@@ -1,0 +1,51 @@
+
+============
+Introduction
+============
+
+The *ODEM* Crowdsale is an ICO based on `Ethereum`_ smart contracts written
+in the `Solidity`_ programming language, starting in the middle of February
+2018.
+
+Prior to deploying this project onto the Ethereum main network, extensive
+code tests and several code audits were performed on the involved smart
+contracts.
+
+This document is a report of one of those audits and subdivided into three
+main parts.
+
+#.  The first part describes the overall structure of the *ODEM* contracts
+    a gives a detailed description of the functionality, features and
+    lifecycle of the single contracts.
+
+#.  The second part contains the code review.
+    It contains the findings after intensive reading of the projects
+    source codes, comments on the coding style and thoughts about the
+    vulnerability to some known attacks.
+
+#.  The third part is about testing -- which test cases were identified,
+    how the tests were carried out.
+
+.. note::
+
+   **Disclaimer**
+
+   This audit is not a legally binding document and it doesn’t guarantee
+   anything.
+
+   Nevertheless it is a result of careful work done for the best.
+
+   That it’s just a discussion document.
+
+.. _Ethereum: https://www.ethereum.org/
+.. _Solidity: https://solidity.readthedocs.io/en/develop/
+
+
+**Version note:**
+The smart contract project code was fetched from *Github*:
+
+====== ============================================
+URL    https://github.com/odemio/ico.git
+Date   Feb 3, 2018, 16:42
+Commit ``42b9404431be3da972bc9b671a3b8546cdc36f81``
+====== ============================================

@@ -1,0 +1,692 @@
+.. highlight:: solidity
+
+===========
+Code Review
+===========
+
+An essential part of an audit is the code review.
+
+The aim is to identify possible issues at that may constitute a risk to
+parts of or the whole project by investigating carefully the code from its
+overall global dependency structure down to single lines of code.
+
+.. note::
+
+    There was no code review of *OpenZeppelin*'s *Solidity* framework itself
+    as it is supposed to have been thoroughly audited already.
+
+-----------
+Methodology
+-----------
+
+Issues were categorized in one of three classes:
+
+**Major issues**
+    are real show stoppers and must be fixed before production deployment.
+    They jeopardize the project due to risk of loosing funds or driving
+    the contracts unusable.
+
+**Minor issues**
+    are rather annoyances, but don't compromise the project.
+    They may make a non-critical function useless or decrease the user
+    experience.
+
+**Notes**
+    are no issues. Superfluous operations, missing events, or wrong
+    values in otherwise unused variables fall into this category.
+
+
+To categorize found issues the following risk matrix is used
+where the columns represent probability, and rows represent severity
+of an issue.
+
+.. csv-table:: Risk Matrix
+    :stub-columns: 1
+    :header: "", "No Impact", Negligible, Marginal, Critical, Catastrophic
+
+    Certain,     Note,        Minor,      Major,    Major,    Major
+    Likely,      Note,        Minor,      Minor,    Major,    Major
+    Possibly,    Note,        Note,       Minor,    Major,    Major
+    Unlikely,    Note,        Note,       Minor,    Minor,    Major
+    Rare,        Note,        Note,       Note,     Minor,    Major
+
+
+-------
+Results
+-------
+
+**No major or minor issues were found.**
+
+The overall code is easy to read, its structure is easy to follow,
+and its intention is easy to grasp.
+
+Nearly all written code conforms *Solidity*'s style guide.
+All sources -- with the exception of *Whitelist*, which is a very simple
+and self-explaining contract -- are well documented.
+
+All arithmetic operations are carried out by the well-known SafeMath library.
+There are no deep nested code dependency trees and no intertwined code paths.
+
+The extensive usage of *OpenZeppelin*'s *Solidity* framework is a good
+practice to increase the overall code robustness by reusing a well-established
+smart contract code base without reinventing the wheel.
+
+
+-------------
+Known Attacks
+-------------
+
+Reentrancy attack
+~~~~~~~~~~~~~~~~~
+
+This attack consists on recursively calling the :sol:`call.value()` method
+in an *ERC20* token to extract the ether stored on the contract if the user is
+not updating the balance of the sender before sending the ether.
+
+See: `more information on reentry <https://medium.com/@gus_tavo_guim/reentrancy-attack-on-smart-contracts-how-to-identify-the-exploitable-and-an-example-of-an-attack-4470a2d8dfe4>`_
+
+Not affected as there are no external calls to unknown addresses.
+
+
+Overflows attacks
+~~~~~~~~~~~~~~~~~
+
+An overflow happens when the result of an arithmetic operation on a variable
+exceeds the variable's type limit.
+
+See: `more information on overflow <https://en.wikipedia.org/wiki/Integer_overflow>`_
+
+Not affected, as all arithmetic operations are carried by the SafeMath library.
+
+
+Short address attack
+~~~~~~~~~~~~~~~~~~~~
+
+This attack is based on providing a too short (less than 20 bytes) address when
+calling a contract function and thus shifting subsequent parameters to the left.
+
+See: `more information on short address <https://blog.golemproject.net/how-to-find-10m-by-just-reading-blockchain-6ae9d39fcd95?gi=ff4e7a5520b7/>`_
+
+Not affected, as all third-party callable functions either don't have address
+parameters or no other parameters beside a single address.
+
+
+--------------------
+Source Whitelist.sol
+--------------------
+
+Major issues
+~~~~~~~~~~~~
+
+*None*
+
+
+Minor issues
+~~~~~~~~~~~~
+
+*None*
+
+
+Notes
+~~~~~
+
+Functions *addToWhitelist(…)* and *removeFromWhitelist(…)*
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+=========== =========
+Propability Certain
+Impact      No Impact
+=========== =========
+
+The functions :sol:`addToWhitelist` and :sol:`removeFromWhitelist` don't pay
+attention to if a given account address was already whitelisted or not.
+
+This has no impact on the desired functionality -- providing a mutable set of
+whitelisted addresses -- but adds log entries for the event
+:sol:`WhitelistUpdated` even when an update didn't happen actually.
+
+**Proposal:**
+Add an additional test and ignore addresses that were/weren't already
+whitelisted.
+
+.. code-block:: solidity
+    :emphasize-lines: 3,12
+
+    function addToWhitelist(address[] _addresses) public onlyOwner {
+        for (uint256 i = 0; i < _addresses.length; i++) {
+            if (!allowedAddresses[_addresses[i]]) {
+                allowedAddresses[_addresses[i]] = true;
+                WhitelistUpdated(now, "Added", _addresses[i]);
+            }
+        }
+    }
+
+    function removeFromWhitelist(address[] _addresses) public onlyOwner {
+        for (uint256 i = 0; i < _addresses.length; i++) {
+            if (allowedAddresses[_addresses[i]]) {
+                allowedAddresses[_addresses[i]] = false;
+                WhitelistUpdated(now, "Removed", _addresses[i]);
+            }
+        }
+    }
+
+The proposed code may slightly increase the gas usage when executed due to
+the additional state variable access.
+
+**Final thoughts:**
+These functions are called by the *Whitelist* administrator only who may
+track off-chain which investors are already whitelisted, or do a prior check
+by calling :sol:`isWhitelisted`.
+
+
+Coding style
+~~~~~~~~~~~~
+
+Doc comments
+''''''''''''
+
+There are no comments at all.
+
+
+
+------------------------
+Source ODEMCrowdsale.sol
+------------------------
+
+Major issues
+~~~~~~~~~~~~
+
+*None*
+
+
+Minor issues
+~~~~~~~~~~~~
+
+*None*
+
+
+Notes
+~~~~~
+
+Function *buyToken(…)*
+''''''''''''''''''''''
+
+=========== ==========
+Probability Possible
+Severity    Negligible
+=========== ==========
+
+The mapping :sol:`trackBuyersPurchases` will contain a wrong value for the
+remainder investor (whose purchase will make the total token supply exceed
+the cap), as he purchased less tokens than noted there.
+
+**Proposal:**
+Put the update of :sol:`trackBuyersPurchases` after remainder logic.
+
+.. code-block:: solidity
+    :emphasize-lines: 13
+
+    function buyTokens(address beneficiary)
+        ...
+        //remainder logic
+        if (token.totalSupply().add(tokens) > TOTAL_TOKENS_FOR_CROWDSALE) {
+            tokens = TOTAL_TOKENS_FOR_CROWDSALE.sub(token.totalSupply());
+            weiAmount = tokens.div(rate);
+
+            // save info so as to refund purchaser after crowdsale's end
+            remainderPurchaser = msg.sender;
+            remainderAmount = msg.value.sub(weiAmount);
+        }
+
+        trackBuyersPurchases[beneficiary] = trackBuyersPurchases[beneficiary].add(tokens);
+        ...
+
+
+Function *buyToken(…)*
+''''''''''''''''''''''
+
+=========== ==========
+Probability Possible
+Severity    Negligible
+=========== ==========
+
+If the amount of remaining tokens
+(:sol:`TOTAL_TOKENS_FOR_CROWDSALE - token.totalSupply`) is not a multiple
+of :sol:`rate`, the remainder investor (whose purchase will make the total
+token supply exceed the cap) will receive a tiny amount of tokens more than
+paid for.
+
+It must be pointed out, that the worth of these additional tokens is less
+than 1 wei (= 10:sup:`-18` ether).
+
+**Simplified Example:**
+
+Assumptions
+
+    * rate is 10 tokens per wei
+    * remaining amount is 26 tokens
+    * investor wants to buy for 5 wei
+
+#.  Usually, the investor would receive 5 wei × 10 = 50 tokens.
+#.  As this would exceed the total cap, he merely receives the remaining 26
+    tokens.
+#.  Their worth in wei is calculated by integer division: int(26/10) = 2 wei.
+#.  After crowdsale end, the investor will be refunded: 5 wei - 2 wei = 3 wei.
+
+The investor actually paid 2 wei and received 26 tokens, that is 6 more than
+he paid for.
+
+**Proposal:**
+Calculate the correct amount of bought tokens by
+
+.. code-block:: solidity
+    :emphasize-lines: 5-6
+
+    function buyTokens(address beneficiary)
+        ...
+        //remainder logic
+        if (token.totalSupply().add(tokens) > TOTAL_TOKENS_FOR_CROWDSALE) {
+            weiAmount = TOTAL_TOKENS_FOR_CROWDSALE.sub(token.totalSupply()).div(rate);
+            tokens = weiAmount.mul(rate);
+
+            // save info so as to refund purchaser after crowdsale's end
+            remainderPurchaser = msg.sender;
+            remainderAmount = msg.value.sub(weiAmount);
+        }
+        ...
+
+and account for remaining token amount being below rate in
+
+.. code-block:: solidity
+    :emphasize-lines: 2
+
+    function hasEnded() public view returns (bool) {
+        if (token.totalSupply() > TOTAL_TOKENS_FOR_CROWDSALE - rate) {
+            return true;
+        }
+        ...
+
+**Final thoughts:**
+Leave the code as it is, as the additional gas cost of an exact solution
+outreaches the wasted token's worth by several orders of magnitude.
+
+
+Function *hasEnded()*
+'''''''''''''''''''''
+
+=========== =========
+Probability Certain
+Severity    No Impact
+=========== =========
+
+The test for if the crowdsale has ended, i.e. is ready to be finalized, is
+implemented in a way that it first performs an access to an external state
+variable :sol:`token.totalSupply` and then accesses internal state via
+:sol:`super.hasEnded()`.
+
+Provided that fulfillment of both test cases are equally probable (in a lazy
+evaluation environment) one could gain a tiny reduction in gas usage by first
+doing the cheaper test.
+
+**Proposal:**
+Simplify and reorder the tests. Lazy evaluation of binary *OR* operator won't
+test the second condition if the first is met already.
+
+::
+
+    function hasEnded() public view returns (bool) {
+        return super.hasEnded() || token.totalSupply() == TOTAL_TOKENS_FOR_CROWDSALE;
+    }
+
+**Final thoughts:**
+As this function is likely to be called only once when :sol:`ODEMCrowdsale`'s
+owner attempts to finalize the crowdsale, the gas reduction is negligible, and
+the code readability is high already.
+
+
+Function *finalization()*
+'''''''''''''''''''''''''
+
+=========== =========
+Probability Certain
+Severity    No Impact
+=========== =========
+
+The external state variable :sol:`token.totalSupply()` is accessed twice
+although its value doesn't change between those calls.
+
+To reduce gas cost consider buffering the value in a local variable first.
+
+**Proposal:**
+Retrieve the total tokens supply only once.
+
+.. code-block:: solidity
+    :emphasize-lines: 11,13-14
+
+    function finalization() internal {
+        // This must have been set manually prior to finalize().
+        require(teamAndAdvisorsAllocation != address(0x0));
+
+        // final minting
+        token.mint(teamAndAdvisorsAllocation, VESTED_TEAM_ADVISORS_SHARE);
+        token.mint(wallet, NON_VESTED_TEAM_ADVISORS_SHARE);
+        token.mint(wallet, COMPANY_SHARE);
+        token.mint(rewardWallet, BOUNTY_REWARD_SHARE);
+
+        uint totalSupply = token.totalSupply();
+
+        if (TOTAL_TOKENS_SUPPLY > totalSupply) {
+            uint256 remainingTokens = TOTAL_TOKENS_SUPPLY.sub(totalSupply);
+
+            token.mint(wallet, remainingTokens);
+        }
+
+        token.finishMinting();
+        ODEMToken(token).unpause();
+        super.finalization();
+    }
+
+**Final thoughts:**
+This function is called only once by :sol:`ODMECrowdsale`'s owner.
+The gas reduction is negligible, and the code readability is high already,
+
+
+Coding style
+~~~~~~~~~~~~
+
+Constructor
+'''''''''''
+
+For long function declarations, it is recommended to drop each argument onto
+it’s own line at the same indentation level as the function body. The closing
+parenthesis and opening bracket should be placed on their own line as well at
+the same indentation level as the function declaration.
+
+::
+
+    function ODEMCrowdsale(
+        uint256 _startTime,
+        uint256 _endTime,
+        address _whitelist,
+        uint256 _rate,
+        address _wallet,
+        address _rewardWallet
+    )
+        public
+        FinalizableCrowdsale()
+        Crowdsale(_startTime, _endTime, _rate, _wallet)
+    {
+        ...
+
+
+Order of functions
+''''''''''''''''''
+
+Functions should be grouped according to their visibility and ordered
+
+    * constructor
+    * fallback function (if exists)
+    * external
+    * public
+    * internal
+    * private
+
+**Proposal:**
+The public function :sol:`setTeamWalletAddress(…)` should appear before
+the internal function :sol:`createTokenContract()`.
+
+
+Function *buyToken(…)*
+''''''''''''''''''''''
+
+The :sol:`buyTokens` function ensures that token purchaser and beneficiary
+are the same:
+
+::
+
+    require(msg.sender == beneficiary);
+
+In function body code both variables are used interchangeably.
+
+**Proposal:**
+To increase code readability one should consider using only one of
+
+    * :sol:`msg.sender`
+    * :sol:`beneficiary`
+
+within function code.
+
+
+Function *setTeamWalletAddress(…)*
+''''''''''''''''''''''''''''''''''
+
+Different namings for the same thing should be avoided:
+
+* :sol:`setTeamWalletAddress`
+* :sol:`teamAndAdvisorsAllocation`
+
+A single terminus, either "team wallet" or "team and advisors allocation"
+would increase code readability
+
+**Proposal:**
+Rename this function to :sol:`setTeamAndAdvisorsAllocationAddress(…)`.
+
+
+Doc comments
+''''''''''''
+
+The heading comment of function :sol:`hasEnded()` is not a doc comment.
+
+
+--------------------
+Source ODEMToken.sol
+--------------------
+
+No Need for Code Review
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The token contract implementation is completely done by *OpenZeppelin*'s
+base contracts
+
+* :sol:`PausableToken`
+* :sol:`MintableToken`
+
+There are no custom code extensions besides definition of public constants
+
+.. code-block:: solidity
+
+    string public constant name = "ODEM Token";
+    string public constant symbol = "ODEM";
+    uint8 public constant decimals = 18;
+
+As the token contract instance is meant to be created and owned by an
+:sol:`ODEMCrowdsale` instance during its whole lifetime, and there's no
+mechanism implemented in the latter to transfer the ownership, the
+:sol:`ODEMToken`'s behavior regarding minting and pausing is fully controlled
+by the :sol:`ODEMCrowdsale` instance.
+
+
+
+------------------------------------
+Source TeamAndAdvisorsAllocation.sol
+------------------------------------
+
+Major Issues
+~~~~~~~~~~~~
+
+*None*
+
+
+Minor Issues
+~~~~~~~~~~~~
+
+*None*
+
+
+Notes
+~~~~~
+
+Function *addTeamAndAdvisorsAllocation(…)*
+''''''''''''''''''''''''''''''''''''''''''
+
+=========== ========
+Probability Rare
+Severity    Marginal
+=========== ========
+
+The token allocation for a single team member can be set only once.
+But as long as the total amount of allocated tokens :sol:`allocatedTokens`
+is below the cap :sol:`totalTeamAndAdvisorsAllocation`, a team members
+allocation can be set again after he/she unlocked his/her share -- again
+only once until next unlock, etc.
+
+::
+
+    ...
+    assert(teamAndAdvisorsAllocations[teamOrAdvisorsAddress] == 0); // can only add once.
+    ...
+
+The only purpose imaginable for this constraints is to increase trust of team
+members, i.e. that the contract owner is not able to change one's allocation
+once set.
+
+**Proposal:**
+If trust is an issue here, an event should be added, too:
+
+.. code-block:: solidity
+
+    event TeamAndAdvisorAllocationAdded(address indexed beneficiary,
+                                        uint256 amount);
+
+**Final thoughts:**
+As team members and advisors have to trust the contracts's owner anyway,
+the mentioned constraint can be removed.
+
+
+Function *unlock()*
+'''''''''''''''''''
+
+=========== ==========
+Probability Unlikely
+Severity    Negligible
+=========== ==========
+
+The only way for the contract owner to know if all team members have unlocked
+their shares is either:
+
+    * to check if ::
+
+          ODEMCrowdsale.VESTED_TEAM_ADVISORS_SHARE
+        - ODEMToken.balanceOf(TeamAndAdvisorsAllocation)
+        = TeamAndAdvisorsAllocation.allocatedTokens
+
+      which won't work if some tokens where transfered to the
+      :sol:`TeamAndAdvisorsAllocation` instance by a third party,
+
+    * to keep an off-chain list of all team members or look into the
+      transaction history and iterate over :sol:`teamAndAdvisorsAllocations`.
+
+Prior to killing the contract it may be desirable to know if there are still
+some shares left.
+
+**Proposal:**
+Introduce a public state variable tracking the total amount of allocated
+tokens which weren't unlocked by team members.
+
+
+Coding style
+~~~~~~~~~~~~
+
+Assert vs require
+'''''''''''''''''
+
+Use :sol:`require` to validate state conditions prior to executing state
+changing operations, and :sol:`assert` to validate contract state after making
+changes.
+
+**Proposal**
+Use :sol:`require` instead :sol:`assert` at the beginning of these functions:
+
+.. code-block:: solidity
+    :emphasize-lines: 6
+
+    function addTeamAndAdvisorsAllocation(address teamOrAdvisorsAddress, uint256 allocationValue)
+        external
+        onlyOwner
+        returns(bool)
+    {
+        require(teamAndAdvisorsAllocations[teamOrAdvisorsAddress] == 0); // can only add once.
+        ...
+
+.. code-block:: solidity
+    :emphasize-lines: 2
+
+    function unlock() external {
+        require(now >= unlockedAt);
+        ...
+
+.. code-block::  solidity
+    :emphasize-lines: 2
+
+    function kill() public onlyOwner {
+        require(now >= canSelfDestruct);
+        ...
+
+
+Contract Naming
+'''''''''''''''
+
+Naming a function :sol:`addTeamAndAdvisorsAllocation` which adds an entry to
+the global mapping :sol:`teamAndAdvisorsAllocations` is fine by itself as it
+implies a "team and advisor allocation" to refer to a single entry.
+
+But thus the contract name is misleading.
+
+**Proposal:**
+Rename the contract to plural form by adding an "s":
+
+::
+
+    contract TeamAndAdvisorsAllocations is Ownable {
+        ...
+
+
+Constant *totalTeamAndAdvisorsAllocation*
+'''''''''''''''''''''''''''''''''''''''''
+
+The state variable :sol:`totalTeamAndAdvisorsAllocation` looks like a constant.
+
+**Proposal:**
+Consider renaming it and placing it above state variables.
+
+.. code-block:: solidity
+    :emphasize-lines: 1
+
+    uint256 private constant TOTAL_TEAM_AND_ADVISORS_ALLOCATION = 38763636e18; // 38 mm
+
+    uint256 public unlockedAt;
+    uint256 public canSelfDestruct;
+    uint256 public tokensCreated;
+    uint256 public allocatedTokens;
+
+
+Variable *canSelfDestruct*
+''''''''''''''''''''''''''
+
+The state variable name :sol:`canSelfDestruct` implies some boolean term.
+Actually its a timestamp.
+
+**Proposal:**
+Consider renaming it to something else, e.g. :sol:`destructibleAt` or
+:sol:`destructibleAfter`.
+
+
+Function *addTeamAndAdvisorsAllocation(…)*
+''''''''''''''''''''''''''''''''''''''''''
+
+Unnecessary return value.
+A call to this function will always return :sol:`true` if not rejected.
+
+
+
+

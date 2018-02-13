@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="43cm" height="27cm" viewBox="10 8 845 535" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="200" y1="140" x2="850" y2="140"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="200" y1="130" x2="850" y2="130"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="200" y1="120" x2="850" y2="120"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="150" y1="110" x2="200" y2="110"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="200" y1="190" x2="250" y2="190"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="250" y1="200" x2="850" y2="200"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="250" y1="210" x2="350" y2="210"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="250" y1="220" x2="450" y2="220"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="250" y1="240" x2="850" y2="240"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="350" y1="290" x2="450" y2="290"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="250" y1="260" x2="850" y2="260"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="350" y1="210" x2="850" y2="210"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="500" y1="220" x2="850" y2="220"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="450" y1="220" x2="500" y2="220"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="450" y1="230" x2="500" y2="230"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="250" y1="230" x2="450" y2="230"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="500" y1="230" x2="850" y2="230"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="250" y1="250" x2="600" y2="250"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="600" y1="250" x2="650" y2="250"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="650" y1="250" x2="850" y2="250"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="250" y1="290" x2="350" y2="290"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="250" y1="300" x2="400" y2="300"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="400" y1="300" x2="450" y2="300"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="550" y1="300" x2="850" y2="300"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="550" y1="290" x2="850" y2="290"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="250" y1="380" x2="650" y2="380"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="650" y1="380" x2="850" y2="380"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="150" y1="430" x2="650" y2="430"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="600" y1="440" x2="800" y2="440"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="600" y1="450" x2="800" y2="450"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="750" y1="460" x2="800" y2="460"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="600" y1="460" x2="750" y2="460"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="100" y1="380" x2="250" y2="380"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="700" y1="490" x2="800" y2="490"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="600" y1="490" x2="700" y2="490"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 4; stroke: #ffc0cb" x1="800" y1="490" x2="850" y2="490"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="110" y1="300" x2="250" y2="300"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="110" y1="290" x2="250" y2="290"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="120" y1="260" x2="250" y2="260"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="120" y1="250" x2="250" y2="250"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="110" y1="240" x2="250" y2="240"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="120" y1="230" x2="250" y2="230"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="110" y1="220" x2="250" y2="220"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="140" y1="210" x2="250" y2="210"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="80" y1="200" x2="250" y2="200"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="120" y1="190" x2="200" y2="190"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="140" y1="440" x2="600" y2="440"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="120" y1="450" x2="600" y2="450"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="120" y1="460" x2="600" y2="460"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="130" y1="490" x2="600" y2="490"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="120" y1="140" x2="200" y2="140"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="110" y1="130" x2="200" y2="130"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="100" y1="120" x2="200" y2="120"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="120" y1="110" x2="150" y2="110"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="120" y1="430" x2="150" y2="430"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #e5e5e5" x1="200" y1="110" x2="850" y2="110"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #e5e5e5" x1="250" y1="190" x2="850" y2="190"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #e5e5e5" x1="600" y1="430" x2="800" y2="430"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="500" y1="300" x2="550" y2="300"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #90ee90" x1="500" y1="290" x2="550" y2="290"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="450" y1="290" x2="500" y2="290"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #ffc0cb" x1="450" y1="300" x2="500" y2="300"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 8; stroke: #e5e5e5" x1="250" y1="350" x2="850" y2="350"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 4; stroke: #ffc0cb" x1="800" y1="450" x2="850" y2="450"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 4; stroke: #ffc0cb" x1="800" y1="440" x2="850" y2="440"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 4; stroke: #ffc0cb" x1="800" y1="460" x2="850" y2="460"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #add8e6" x1="120" y1="350" x2="250" y2="350"/>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:italic;font-weight:normal" x="150" y="47.85">
+    <tspan x="150" y="47.85">Overall</tspan>
+    <tspan x="150" y="57.85">Project</tspan>
+    <tspan x="150" y="67.85">Start</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:italic;font-weight:normal" x="200" y="57.85">
+    <tspan x="200" y="57.85">Whitelist</tspan>
+    <tspan x="200" y="67.85">Deployed</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="150" y1="70" x2="150" y2="510"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="200" y1="70" x2="200" y2="510"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="250" y1="70" x2="250" y2="510"/>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:italic;font-weight:normal" x="250" y="57.85">
+    <tspan x="250" y="57.85">Crowdsale Deployed</tspan>
+    <tspan x="250" y="67.85">(→ Token Deployed)</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:italic;font-weight:normal" x="350" y="57.85">
+    <tspan x="350" y="57.85">Crowdsale</tspan>
+    <tspan x="350" y="67.85">Started</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="350" y1="70" x2="350" y2="510"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="400" y1="170" x2="400" y2="310"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="550" y1="70" x2="550" y2="510"/>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:italic;font-weight:normal" x="550" y="57.85">
+    <tspan x="550" y="57.85">Crowdsale</tspan>
+    <tspan x="550" y="67.85">Ended</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:italic;font-weight:normal" x="650" y="57.85">
+    <tspan x="650" y="57.85">Crowdsale</tspan>
+    <tspan x="650" y="67.85">Finalized</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="650" y1="70" x2="650" y2="510"/>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="450" y1="180" x2="450" y2="310"/>
+  <text font-size="6.4" style="fill: #000000;text-anchor:middle;font-family:Fira Sans;font-style:italic;font-weight:normal" x="474" y="162.3">
+    <tspan x="474" y="162.3">Crowdsale</tspan>
+    <tspan x="474" y="170.3">Paused **</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="500" y1="180" x2="500" y2="310"/>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.5; stroke: #4d4d4d" points="450,178 452,176 472,176 474,174 476,176 498,176 500,178 "/>
+  <text font-size="6.4" style="fill: #000000;text-anchor:middle;font-family:Fira Sans;font-style:italic;font-weight:normal" x="374" y="174.3">
+    <tspan x="374" y="174.3">First Hour</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="700" y1="70" x2="700" y2="510"/>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:italic;font-weight:normal" x="700" y="57.85">
+    <tspan x="700" y="57.85">Team Wallet</tspan>
+    <tspan x="700" y="67.85">Unlocked</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:italic;font-weight:normal" x="800" y="57.85">
+    <tspan x="800" y="57.85">Team Wallet</tspan>
+    <tspan x="800" y="67.85">Destroyed</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="600" y1="70" x2="600" y2="510"/>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:italic;font-weight:normal" x="600" y="57.85">
+    <tspan x="600" y="57.85">Team Wallet</tspan>
+    <tspan x="600" y="67.85">Deployed *</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="800" y1="70" x2="800" y2="510"/>
+  <text font-size="6.4" style="fill: #000000;text-anchor:end;font-family:Fira Sans;font-style:italic;font-weight:normal" x="698" y="404.3">
+    <tspan x="698" y="404.3">182 Days later</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #4d4d4d" x1="352" y1="180" x2="392.764" y2="180"/>
+    <polygon style="fill: #4d4d4d" points="395.764,180 391.764,182 392.764,180 391.764,178 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #4d4d4d" points="395.764,180 391.764,182 392.764,180 391.764,178 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #4d4d4d" x1="602" y1="412" x2="692.764" y2="412"/>
+    <polygon style="fill: #4d4d4d" points="695.764,412 691.764,414 692.764,412 691.764,410 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #4d4d4d" points="695.764,412 691.764,414 692.764,412 691.764,410 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #4d4d4d" x1="602" y1="420" x2="742.764" y2="420"/>
+    <polygon style="fill: #4d4d4d" points="745.764,420 741.764,422 742.764,420 741.764,418 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #4d4d4d" points="745.764,420 741.764,422 742.764,420 741.764,418 "/>
+  </g>
+  <text font-size="6.4" style="fill: #000000;text-anchor:end;font-family:Fira Sans;font-style:italic;font-weight:normal" x="748" y="412.3">
+    <tspan x="748" y="412.3">365 Days later</tspan>
+  </text>
+  <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #4d4d4d" x1="750" y1="410" x2="750" y2="510"/>
+  <text font-size="6.4" style="fill: #1e90ff;text-anchor:middle;font-family:Fira Sans;font-style:italic;font-weight:normal" x="476" y="318.192">
+    <tspan x="476" y="318.192">** Crowdsale pause is possible in other</tspan>
+    <tspan x="476" y="326.193">periods, too, but its only purpose is to</tspan>
+    <tspan x="476" y="334.193">block token purchases by investors.</tspan>
+  </text>
+  <text font-size="6.4" style="fill: #1e90ff;text-anchor:start;font-family:Fira Sans;font-style:italic;font-weight:normal" x="600" y="518">
+    <tspan x="600" y="518">* Team wallet can be deployed earlier</tspan>
+    <tspan x="600" y="526">but it must be pointed out that its 182 days</tspan>
+    <tspan x="600" y="534">retention period and 365 days minimum</tspan>
+    <tspan x="600" y="542">lifetime will start at deployment time. </tspan>
+  </text>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #1e90ff" d="M 248,190 A 121.667,121.667 0 0 0 243.863,344.996"/>
+    <polygon style="fill: #1e90ff" points="241.466,347.075 247.671,349.623 245.986,343.13 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #1e90ff" points="241.466,347.075 247.671,349.623 245.986,343.13 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #1e90ff" d="M 85.226,336.145 A 129.401,129.401 0 0 0 112,160"/>
+    <polygon style="fill: #1e90ff" points="83.6065,333.816 80.4097,339.713 87.0458,338.732 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #1e90ff" points="83.6065,333.816 80.4097,339.713 87.0458,338.732 "/>
+  </g>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #1e90ff" d="M 627.308,242.092 A 118.033,118.033 0 0 0 552,180"/>
+    <polygon style="fill: #1e90ff" points="624.705,243.181 629.805,247.539 630.232,240.845 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #1e90ff" points="624.705,243.181 629.805,247.539 630.232,240.845 "/>
+  </g>
+  <text font-size="8" style="fill: #1e90ff;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="108" y="322.675">
+    <tspan x="108" y="322.675">becomes</tspan>
+  </text>
+  <text font-size="8" style="fill: #1e90ff;text-anchor:end;font-family:Fira Sans;font-style:normal;font-weight:normal" x="236" y="342.675">
+    <tspan x="236" y="342.675">creates</tspan>
+  </text>
+  <text font-size="8" style="fill: #1e90ff;text-anchor:middle;font-family:Fira Sans;font-style:normal;font-weight:normal" x="596" y="238.675">
+    <tspan x="596" y="238.675">preconditions</tspan>
+  </text>
+  <g>
+    <path style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #1e90ff" d="M 610 240 C 610,244 614,248 617.626,248.725"/>
+    <polygon style="fill: #1e90ff" points="617.038,251.667 623.51,249.902 618.215,245.784 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #1e90ff" points="617.038,251.667 623.51,249.902 618.215,245.784 "/>
+  </g>
+  <text font-size="11.2" style="fill: #1e90ff;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:700" x="10" y="163.75">
+    <tspan x="10" y="163.75">Crowdsale Contract</tspan>
+  </text>
+  <text font-size="11.2" style="fill: #1e90ff;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:700" x="10" y="323.75">
+    <tspan x="10" y="323.75">Token Contract</tspan>
+  </text>
+  <text font-size="11.2" style="fill: #1e90ff;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:700" x="10" y="403.75">
+    <tspan x="10" y="403.75">TeamAllocation Contract</tspan>
+  </text>
+  <text font-size="11.2" style="fill: #1e90ff;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:700" x="10" y="83.75">
+    <tspan x="10" y="83.75">Whitelist Contract</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:700" x="30" y="102.675">
+    <tspan x="30" y="102.675">Whitelist Owner</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="112.675">
+    <tspan x="40" y="112.675">Contract Deployment</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="122.675">
+    <tspan x="40" y="122.675">Add Investor</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="132.675">
+    <tspan x="40" y="132.675">Remove Investor</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="142.675">
+    <tspan x="40" y="142.675">Transfer Ownership</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:700" x="30" y="182.675">
+    <tspan x="30" y="182.675">Crowdsale Owner</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="192.675">
+    <tspan x="40" y="192.675">Contract Deployment</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="202.675">
+    <tspan x="40" y="202.675">Set Rate</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="262.675">
+    <tspan x="40" y="262.675">Transfer Ownership</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="212.675">
+    <tspan x="40" y="212.675">Mint for Private Investor</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="222.675">
+    <tspan x="40" y="222.675">Pause Crowdsale</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="232.675">
+    <tspan x="40" y="232.675">Unpause Crowdsale</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="242.675">
+    <tspan x="40" y="242.675">Set Team Wallet</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="252.675">
+    <tspan x="40" y="252.675">Finalize Crowdsale</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:700" x="30" y="282.675">
+    <tspan x="30" y="282.675">Whitelisted Investor</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="302.675">
+    <tspan x="40" y="302.675">Buy &gt; 2M Tokens</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="292.675">
+    <tspan x="40" y="292.675">Buy ≤ 2M Tokens</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:700" x="30" y="372.675">
+    <tspan x="30" y="372.675">Token Holder</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="382.675">
+    <tspan x="40" y="382.675">Transfer Tokens</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:700" x="30" y="422.675">
+    <tspan x="30" y="422.675">Team Wallet Owner</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="432.675">
+    <tspan x="40" y="432.675">Contract Deployment</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="442.675">
+    <tspan x="40" y="442.675">Add Team Member Share</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="452.675">
+    <tspan x="40" y="452.675">Transfer Ownership</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="462.675">
+    <tspan x="40" y="462.675">Contract Destruction</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:700" x="30" y="482.675">
+    <tspan x="30" y="482.675">Team Member</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="492.675">
+    <tspan x="40" y="492.675">Unlock/Withdraw Share</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffe1a8" x="350" y="10" width="200" height="30"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ffffff" x="350" y="10" width="200" height="30"/>
+  </g>
+  <g>
+    <rect style="fill: #94cbff" x="250" y="10" width="100" height="30"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ffffff" x="250" y="10" width="100" height="30"/>
+  </g>
+  <g>
+    <rect style="fill: #94cbff" x="650" y="10" width="200" height="30"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ffffff" x="650" y="10" width="200" height="30"/>
+  </g>
+  <text font-size="11.2" style="fill: #4d4d4d;text-anchor:middle;font-family:Fira Sans;font-style:italic;font-weight:normal" x="300" y="28.75">
+    <tspan x="300" y="28.75">Pre-Crowdsale</tspan>
+  </text>
+  <text font-size="11.2" style="fill: #4d4d4d;text-anchor:middle;font-family:Fira Sans;font-style:italic;font-weight:normal" x="450" y="28.75">
+    <tspan x="450" y="28.75">Crowdsale Period</tspan>
+  </text>
+  <text font-size="11.2" style="fill: #4d4d4d;text-anchor:middle;font-family:Fira Sans;font-style:italic;font-weight:normal" x="750" y="28.75">
+    <tspan x="750" y="28.75">Token Trading Period</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:700" x="30" y="342.675">
+    <tspan x="30" y="342.675">Token Owner</tspan>
+  </text>
+  <text font-size="8" style="fill: #000000;text-anchor:start;font-family:Fira Sans;font-style:normal;font-weight:normal" x="40" y="352.675">
+    <tspan x="40" y="352.675">Contract Deployment</tspan>
+  </text>
+  <g>
+    <rect style="fill: #e5e5e5" x="550" y="10" width="100" height="30"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ffffff" x="550" y="10" width="100" height="30"/>
+  </g>
+  <g>
+    <rect style="fill: #e5e5e5" x="150" y="10" width="100" height="30"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ffffff" x="150" y="10" width="100" height="30"/>
+  </g>
+</svg>

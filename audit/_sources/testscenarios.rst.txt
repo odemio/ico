@@ -1,0 +1,850 @@
+.. highlight:: javascript
+
+=======
+Testing
+=======
+
+In order to reveal issues in the contracts code which would have been
+overseen otherwise, some tests on the Ethereum Virtual Machine (EVM)
+were performed.
+
+.. note::
+
+    There were no tests performed on the *OpenZeppelin* *Solidity* framework
+    itself as it is supposed to have been thoroughly tested already.
+
+
+
+-----------
+Methodology
+-----------
+
+The identification and developing of test scenarios involved several steps:
+
+#. All involved accounts and their roles had to be identified.
+#. The capabilities of these roles within different periods along the
+   project's life time were identified.
+#. Invariants within the different life cycle periods had to be
+   identified.
+#. Based on the steps above test cases were drafted.
+   Additional attention was paid to the actual implementation and
+   meaningful constant values.
+#. Automated tests had to be written (where not already done).
+#. Manual tests and automated tests were run on different test environments.
+
+
+
+-------
+Results
+-------
+
+**All performed tests were successful, i.e. their results were as expected.**
+
+
+
+-----------------------
+Involved Roles/Accounts
+-----------------------
+
+The following roles where identified:
+
+Whitelist:
+    * contract account of :sol:`Whitelist` instance
+
+Whitelist owner:
+    * a regular account
+    * initially the deployer of :sol:`Whitelist` but this can change
+      due to :sol:`transferOwnership`
+
+Crowdsale:
+    * contract account of :sol:`ODEMCrowdsale` instance
+
+Crowdsale owner:
+    * a regular account
+    * initially the deployer of :sol:`ODEMCrowdsale` but this can change
+      due to :sol:`transferOwnership`
+
+Private investor:
+    * multiple accounts which receive tokens during pre-crowdsale period
+    * regular accounts while testing
+
+Regular investor / Whitelisted Investor:
+    * multiple accounts which were added to :sol:`Whitelist`
+    * buy tokens during crowdsale
+    * regular accounts while testing
+
+Company Wallet:
+    * contract account of a multisig wallet
+    * a reguar account while testing
+
+Reward Wallet:
+    * contract account of a wallet receiving bounty tokens
+    * a reguar account while testing
+
+Token:
+    * contract account of :sol:`ODEMToken` instance
+
+Token Owner:
+    * same as *Crowdsale* while testing crowdsale (and when in production)
+    * a regular account for simple isolated tests
+
+Token Holder:
+    * multiple accounts while testing
+    * have a non-zero token balance
+    * includes
+        * *Private investor*
+          (due to pre-crowdsale minting)
+        * *Regular investor*
+          (due to token purchase during crowdsale)
+        * *Company wallet*
+          (due to received share on crowdsale finalization)
+        * *Reward wallet*
+          (due to received share on crowdsale finalization)
+        * *TeamAndAdvisorsAllocation*
+          (due to received share on crowdsale finalization)
+        * *TeamAndAdvisorsAllocation owner*
+          (due to destruction of :sol:`TeamAndAdvisorsAllocation`)
+        * *Team member*
+          (due to token share allocation after 182 days retention period)
+        * other accounts
+          (due to token trades/transfers after crowdsale finalzation)
+
+TeamAndAdvisorsAllocation:
+    * contract account of :sol:`TeamAndAdvisorsAllocation`
+
+TeamAndAdvisorsAllocation owner:
+    * a regular account
+    * initially the deployer of :sol:`TeamAndAdvisorsAllocation` but this can
+      change due to :sol:`transferOwnership`
+
+Team member:
+    * multiple regular accounts while testing
+    * were added to :sol:`TeamAndAdvisorsAllocation` with a non-zero share
+
+Third party:
+    * any unprivileged account
+    * context depends on specific test
+
+
+---------
+Lifecycle
+---------
+
+The following diagram gives a brief overview of the allowed/forbidden actions
+the participating roles may (green bars) or may not (red bars) perform over
+the time.
+
+.. only:: html
+
+   .. figure:: _images/timeline.svg
+
+   :sup:`Capabilities of participants over time`
+
+.. only:: latex
+
+   .. figure:: _images/timeline.eps
+
+   :sup:`Capabilities of participants over time`
+
+
+
+.. |T| replace:: Test:
+.. |R| replace:: Rationale:
+.. |E| replace:: Expected behavior:
+
+--------------------
+Test Cases Whitelist
+--------------------
+
+Deployment
+~~~~~~~~~~
+
+|T| Deployment of Whitelist
+'''''''''''''''''''''''''''
+
+|R|
+    A deployed :sol:`Whitelist` is needed prior to the deployment
+    of :sol:`ODEMCrowdsale`.
+
+|E|
+    * Success.
+    * Deployer account becomes whitelist owner.
+
+
+Adding Addresses
+~~~~~~~~~~~~~~~~
+
+|T| Whitelist owner adds addresses
+''''''''''''''''''''''''''''''''''
+
+This test was carried as multiple sub-tests with:
+
+#. a single address that wasn't whitelisted before
+#. a single address that was whitelisted already
+#. ten addresses at once, where the address list contains double entries
+   and invalid addresses (:sol:`address(0)`)
+
+|R|
+    The *Whitelist* implementation is agnostic regarding submitted addresses.
+
+|E|
+    * Success.
+    * For every submitted item in address list an event :sol:`WhitelistUpdated`
+      with :sol:`operation = "Added"` is logged.
+    * For every submitted address :sol:`addr` the function call
+      :sol:`isWhitelisted(addr)` returns  :sol:`true`.
+
+
+|T| A third party (non-owner) adds an address
+'''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Only the whitelist owner should be able to add addresses.
+
+|E|
+    * Failure / Transaction reversal.
+
+
+Removing Addresses
+~~~~~~~~~~~~~~~~~~
+
+|T| Whitelist owner removes addresses
+'''''''''''''''''''''''''''''''''''''
+
+This test was carried out as multiple sub-tests with:
+
+#. a single address that is whitelisted
+#. a single address that wasn't whitelisted before
+#. ten addresses at once, where the address list contains double entries
+   and invalid addresses (:sol:`address(0)`)
+
+|R|
+    The *Whitelist* implementation is agnostic regarding submitted addresses.
+
+|E|
+    * Success.
+    * For every submitted item in address list an event :sol:`WhitelistUpdated`
+      with :sol:`operation = "Removed"` is logged.
+    * For every submitted address :sol:`addr` the function call
+      :sol:`isWhitelisted(addr)` returns  :sol:`false`.
+
+
+|T| A third party (non-owner) removes an address
+''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Only the whitelist owner should be able to remove addresses.
+
+|E|
+    * Failure / Transaction reversal.
+
+
+
+------------------------
+Test Cases ODEMCrowdsale
+------------------------
+
+Deployment
+~~~~~~~~~~
+
+|T| Deployment of ODEMCrowdsale with invalid parameters
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+This test was carried out as multiple sub-tests where:
+
+#. :sol:`_startTime < now`
+#. :sol:`_startTime > _endTime`
+#. :sol:`_whitelist = address(0)`
+#. :sol:`_rate = 0`
+#. :sol:`_wallet = address(0)`
+#. :sol:`_rewardWallet = address(0)`
+
+|R|
+    These are base constraints on the given values for a proper functionality
+    of the crowdsale.
+
+|E|
+    * Failure / Transaction reversal.
+
+
+|T| Deployment of ODEMCrowdsale with valid parameters
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Contract :sol:`ODEMCrowdsale` must be deployable.
+
+|E|
+    * Success.
+    * Deployer account becomes crowdsale owner.
+    * The following constructor parameters set state variables to given values
+
+        * :sol:`_startTime` → :sol:`startTime`
+        * :sol:`_endTime` → :sol:`endTime`
+        * :sol:`_whitelist` → :sol:`whitelist`
+        * :sol:`_rate` → :sol:`rate`
+        * :sol:`_wallet` → :sol:`wallet`
+        * :sol:`_rewardWallet` → :sol:`rewardWallet`
+
+    * The state variable :sol:`oneHourAfterStartTime` is correctly calculated
+      as :sol:`startTime + 60 * 60`
+    * An :sol:`ODEMToken` instance was created and assigned to state variable
+      :sol:`token`:
+
+        * the attribute :sol:`token.name` should be :sol:`"ODEM Token"`
+        * the token owner is the crowdsale contract account
+        * the token is paused, i.e. :sol:`token.paused` is set to :sol:`true`
+
+
+|T| Constants sanity check
+''''''''''''''''''''''''''
+
+|R|
+    The defined constants in :sol:`ODEMCrowdsale` impose restrictions on the
+    amount of mintable/available tokens.
+    The following conditions are not explicitly checked within the code, but
+    rely on meaningful hard-coded values:
+
+        * :sol:`PRE_CROWDSALE_CAP <= TOTAL_TOKENS_FOR_CROWDSALE`
+        * :sol:`TOTAL_TOKENS_FOR_CROWDSALE <= TOTAL_TOKENS_SUPPLY`
+        * ::
+
+            TOTAL_TOKENS_SUPPLY >= BOUNTY_REWARD_SHARE
+                                   + VESTED_TEAM_ADVISORS_SHARE
+                                   + NON_VESTED_TEAM_ADVISORS_SHARE
+                                   + COMPANY_SHARE
+                                   + TOTAL_TOKENS_FOR_CROWDSALE
+
+|E|
+    * The constraints are fulfilled.
+
+
+Explicit state value changes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+|T| Crowdsale owner sets a valid rate
+'''''''''''''''''''''''''''''''''''''
+
+|R|
+    The rate can be changed at any time as long at is greater than 0.
+
+|E|
+    * Success.
+    * The crowdsale state variable :sol:`rate` is properly adjusted.
+    * An event :sol:`TokenRateChanged` with correct values for old and new
+      rate is logged.
+
+
+|T| Crowdsale owner sets rate to zero
+'''''''''''''''''''''''''''''''''''''
+
+|R|
+    An invariant is sol:`rate > 0`.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| A third party (non-owner) changes rate
+''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Only the crowdsale owner should be able to change the rate.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| Crowdsale owner sets a valid teamAndAdvisorsAllocation address
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    The teamAndAdvisorsAllocation address can be changed at any time.
+
+|E|
+    * Success.
+    * The crowdsale state variable :sol:`teamAndAdvisorsAllocation` is
+      properly adjusted.
+
+
+|T| Crowdsale owner sets teamAndAdvisorsAllocation to zero address
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    The supplied address must be non-zero.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| A third party (non-owner) sets a valid teamAndAdvisorsAllocation address
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Only the crowdsale owner should be able to set the team wallet address.
+
+|E|
+    * Failure / transaction reversal.
+
+
+During Pre-Crowdsale Period
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+|T| Invariants
+''''''''''''''
+
+|R| During pre-crowdsale the following condition must hold:
+    * `token.totalSupply <= PRE_CROWDSALE_CAP`
+
+
+|T| Crowdsale owner mints a valid amount of tokens for a private investor
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Before crowdsale starts private investors get their token share minted
+    by owner.
+
+|E|
+    * Success.
+    * The investors token balance gets increased by the correct amount.
+    * The total token supply is increased accordingly.
+    * An event :sol:`PrivateInvestorTokenPurchase` with correct token amount
+      is logged.
+
+
+|T| Crowdsale owner mints an invalid amount of tokens for a private investor
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    The total amount of mintable tokens during pre-crowdsale is capped by
+    constant :sol:`PRE_CROWDSALE_CAP`.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| A third party (non-owner) mints tokens for a private investor
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Only crowdsale owner should be able to mint tokens during
+    pre-crowdsale period.
+
+|E|
+    * Failure / transaction reversal.
+
+
+During Crowdsale Period
+~~~~~~~~~~~~~~~~~~~~~~~
+
+|T| Invariants
+''''''''''''''
+
+|R| During pre-crowdsale the following condition must hold:
+    * `token.totalSupply <= TOTAL_TOKENS_FOR_CROWDSALE`
+
+
+|T| Crowdsale owner mints a valid amount of tokens for a private investor
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    After the crowdsale has started the owner should not be able anymore to
+    mint tokens for private investors.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| A whitelisted investor buys a valid amount of tokens
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Any account that was whitelisted should be able to purchase tokens
+    as long as the individual first hour cap or the total token cap won't
+    be exceeded.
+
+|E|
+    * Success.
+    * The token amount is :sol:`rate * msg.value`.
+    * The investor's entry in :sol:`trackBuyersPurchase` is increased by the
+      correct token amount.
+    * The state variable :sol:`weiRaised` is increased by sent wei value.
+    * The sent wei are forwarded to the company wallet.
+    * The investor's token balance gets increased by the correct token amount.
+    * The total token supply is increased accordingly.
+    * An event :sol:`TokenPurchase` with correct token amount and value is
+      logged.
+
+
+|T| A whitelisted investor buys too many tokens within the first hour
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    During the first hour after crowdsale start the individual total amount of
+    tokens an investor can buy is limited by constant
+    :sol:`PERSONAL_FIRST_HOUR_CAP`.
+    This cap doesn't take tokens into account which were received during
+    pre-crowdsale.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| A whitelisted investor buys tokens while crowdsale is paused
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    The crowdsale owner can pause and unpause the crowdsale.
+    During pause nobody should be able to purchase tokens, even if the
+    purchaser was whitelisted and no cap would be exceeded.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| A whitelisted investor buys tokens for the benefit of another account
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    The crowdsale definition in *OpenZeppelin*'s *Solidity* framework allows
+    a token purchaser to be different from the beneficiary.
+    In :sol:`ODEMCrowdsale` purchaser and beneficiary must be the same account.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| A whitelisted investor buys tokens so that the total cap is exceeded
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    The total amount of tokens minted during pre-crowdsale and crowdsale
+    is capped by the constant :sol:`TOTAL_TOKENS_FOR_CROWDSALE`.
+    If a purchase exceeds this limit the purchaser receives the remaining
+    tokens. His/Her account and overspent wei value will be safed for later
+    refund.
+
+|E|
+    * Success.
+    * The received amount token are the remaining, i.e. difference of
+      :sol:`TOTAL_TOKENS_FOR_CROWDSALE - token.totalSupply`, their worth
+      in wei is remaing tokens divided by :sol:`rate`.
+    * The state variable :sol:`weiRaised` is increased by wei worth of
+      remaining tokens.
+    * The sent wei are forwarded to the company wallet.
+    * The investor's token balance gets increased by the received token amount.
+    * The total token supply is increased accordingly and should be equal to
+      :sol:`TOTAL_TOKENS_FOR_CROWDSALE`.
+    * An event :sol:`TokenPurchase` with received token amount and worth in wei
+      logged.
+    * The crowdsale ends early, i.e. :sol:`hasEnded` becomes true.
+
+
+|T| A third party (non-whitelisted-investor) buys tokens
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Prior to be able to purchase tokens investors have to be whitelisted.
+
+|E|
+    * Failure / transaction reversal.
+
+
+After Crowdsale Period
+~~~~~~~~~~~~~~~~~~~~~~
+
+|T| Invariants
+''''''''''''''
+
+|R| After -crowdsale the following condition must hold:
+    * `token.totalSupply == TOTAL_TOKENS_SUPPLY`
+
+
+|T| A whitelisted investor buys tokens
+''''''''''''''''''''''''''''''''''''''
+
+|R|
+    After the crowdsale has ended nobody should be able to buy tokens
+    anymore, even if the investor is whitelisted or the total token cap was
+    not reached, i.e. the crowdsale ended due to :sol:`endTime`.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| Crowdsale owner finalizes without having set a team wallet address
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Prior to finalization the address of a :sol:`TeamAndAdvisorAllocation`
+    contract instance has to be saved.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| Crowdsale owner finalizes after having set a team wallet address
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    The finalization of crowdsale is a crucial step to make the token
+    tradeable/transferrable.
+
+|E|
+    * Success.
+    * Token balance of teamAndAdvisorsAllocation is increased by
+      :sol:`VESTED_TEAM_ADVISORS_SHARE`.
+    * Token balance of company wallet is increased by
+      :sol:`NON_VESTED_TEAM_ADVISORS_SHARE + COMPANY_SHARE` plus the remaining
+      total amount of tokens
+      (:sol:`TOTAL_TOKENS_SUPPLY - token.totalSupply`).
+    * Token balance of reward wallet is increased by
+      :sol:`BOUNTY_REWARD_SHARE`.
+    * The token total supply is :sol:`TOTAL_TOKENS_SUPPLY`.
+    * The token minting is finished, i.e. not possible anymore.
+    * The token is unpaused, i.e. is tradeable.
+    * An event :sol:`Finalized` (for the crowdsale) and an event
+      :sol:`Unpause` (for the token) are logged.
+
+
+|T| Crowdsale owner finalizes a again
+'''''''''''''''''''''''''''''''''''''
+
+|R|
+    A finalized crowdsale should not be finalizable anymore.
+
+|E|
+    * Failure / transaction reversal.
+
+
+
+--------------------
+Test Cases ODEMToken
+--------------------
+
+Deployment
+~~~~~~~~~~
+
+|T| Deployment of ODEMToken
+'''''''''''''''''''''''''''
+
+|R|
+    The token contract will be deployed automatically by
+    :sol:`ODEMCrowdsale` on initialization.
+
+|E|
+    * Success.
+    * Deployer account (crowdsale contract) becomes token owner.
+    * The global state variables :sol:`name`, :sol:`symbol`, :sol:`decimals`
+      are correctly set.
+
+
+
+------------------------------------
+Test Cases TeamAndAdvisorsAllocation
+------------------------------------
+
+Deployment
+~~~~~~~~~~
+
+|T| Deployment of TeamAndAvisorsAllocation
+''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Contract :sol:`TeamAndAvisorsAllocation` must be deployable.
+
+|E|
+    * Success.
+    * Deployer account becomes contract instance owner.
+    * The state variable :sol:`odem` is set to the constructor parameters
+      value :sol:`token`.
+    * The state variable :sol:`unlockedAt` is correctly calculated
+      as :sol:`now + 182 days` (:sol:`= now + 182 * 24 * 60 * 60`).
+    * The state variable :sol:`canSelfDestruct` is correctly calculated
+      as :sol:`now + 365 days` (:sol:`= now + 365 * 24 * 60 * 60`).
+
+
+|T| Constants sanity check
+''''''''''''''''''''''''''
+
+|R|
+    The constants :sol:`totalTeamAndAdvisorsAllocation` constitutes a cap on
+    the amount of tokens that can be assigned by team members.
+    It should not be greater than the amount of tokens that get minted for
+    this contract on crowdsale finalization
+    (:sol:`ODEMCrowdsale.VESTED_TEAM_ADVISORS_SHARE`), otherwise some team
+    members won't be able to unlock their share.
+
+|E|
+    * The constraint is fulfilled.
+
+
+Assigning Allocations
+~~~~~~~~~~~~~~~~~~~~~
+
+|T| Owner adds a team member's share
+''''''''''''''''''''''''''''''''''''
+
+|R|
+    The team member's share gets saved.
+
+|E|
+    * Success.
+    * The total number of allocated tokens is increased by the share amount.
+    * The team member's share is correctly added to the state variable
+      :sol:`teamAndAdvisorsAllocations`.
+
+
+|T| Owner changes a team member's share before it was unlocked
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    The share of a team member (an account) can be set only once
+    until it gets unlocked and thus withdrawn by the team member.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| Owner adds a team member's share so that the total cap is exceeded
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    The total amount of allocated tokens must not be greater than
+    :sol:`totalTeamAndAdvisorsAllocation`.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| A third party (non-owner) adds an allocation
+''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Only the owner should be able to add allocations.
+
+|E|
+    * Failure / transaction reversal.
+
+
+Unlocking token share
+~~~~~~~~~~~~~~~~~~~~~
+
+|T| Team member unlocks his/her share within retention period
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Nobody should be able to unlock his/her share during the first 182 days
+    after contract deployment.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| Team member unlocks his/her share after retention period
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Team members get their token share by unlocking it, so that it gets
+    credited to their token balance.
+
+|E|
+    * Success.
+    * The total amount of tokens possessed by the contract is saved
+      to :sol:`tokensCreated` if this was the first call to :sol:`unlock()`
+      by anyone.
+    * Token balance of *TeamAndAdvisorsAllocation* contract is reduced
+      by the team member's share.
+    * Token balance of team member is increased by his/her share.
+    * The allocation of the team member is set to zero.
+
+
+|T| Team member unlocks his/her share after contract was killed
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    After killing the contract no unlocking of token share should be possible.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| A third party (non-team-member) unlocks
+'''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Non-team-members have no token share, i.e. their allocation is zero.
+    If they attempt to unlock they'll waste gas.
+
+|T|
+    * Success.
+    * The total amount of tokens possessed by the contract is saved
+      to :sol:`tokensCreated` if this was the first call to :sol:`unlock()`
+      by anyone.
+    * An amount of zero tokens will be transferred / added to the caller's
+      balance.
+
+
+Contract Destruction
+~~~~~~~~~~~~~~~~~~~~
+
+|T| Owner kills contract within the first 365 days after deployment
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    The :sol:`TeamAndAdvisorsAllocation` contract instance has to be accessible
+    for at least one year.
+
+|E|
+    * Failure / transaction reversal.
+
+
+|T| Owner kills contract 365 days or more after deployment
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+|R|
+    Destroying the :sol:`TeamAndAdvisorsAllocation` contract will make all
+    team members lose their not-yet unlocked token share.
+
+|E|
+    * All remaining tokens of the contract (including those which weren't
+      unlocked by team members) get transferred to the owner, thus increasing
+      his/her token balance.
+    * Token balance of :sol:`TeamAndAdvisorsAllocation` instance is zero.
+    * The contract gets destroyed (code data of account is set to ``0x0``).
+
+
+
+-----------------
+Test Environments
+-----------------
+
+The *ODEM ICO* contracts were tested on different networks.
+
+#.  Deployment on the `Rinkeby`_ test network.
+
+    The testing was carried out by manually calling the contract functions
+    via `MyEtherWallet`_ and `MetaMask`_ from different accounts.
+
+    Analysis of transaction history and contract state were done via
+    MyEtherWallet and `Etherscan`_.
+
+#.  Deployment on a local machine.
+
+    Automated tests for the `Truffle`_ (v4.0.5) test framework were written
+    and executed on a local `Ganache-CLI`_ (v6.0.3) instance.
+
+#.  Deployment on a local test network.
+
+    The above mentioned automated tests and some additional manual tests
+    were carried out on a `Parity`_ (v1.8.6) development network.
+
+    Analysis of transaction history and contract state was done via
+    Parity's frontend.
+
+.. _Rinkeby: https://www.rinkeby.io/
+.. _MyEtherWallet: https://www.myetherwallet.com/
+.. _MetaMask: https://metamask.io/
+.. _Etherscan: https://rinkeby.etherscan.io/
+.. _Truffle: http://truffleframework.com/
+.. _Ganache-CLI: http://truffleframework.com/ganache/
+.. _Parity: https://www.parity.io/
