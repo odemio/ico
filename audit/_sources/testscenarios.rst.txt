@@ -23,7 +23,7 @@ The identification and developing of test scenarios involved several steps:
 
 #. All involved accounts and their roles had to be identified.
 #. The capabilities of these roles within different periods along the
-   project's life time were identified.
+   project's life cycle were identified.
 #. Invariants within the different life cycle periods had to be
    identified.
 #. Based on the steps above test cases were drafted.
@@ -192,7 +192,7 @@ This test was carried as multiple sub-tests with:
     * For every submitted item in address list an event :sol:`WhitelistUpdated`
       with :sol:`operation = "Added"` is logged.
     * For every submitted address :sol:`addr` the function call
-      :sol:`isWhitelisted(addr)` returns  :sol:`true`.
+      :sol:`isWhitelisted(addr)` returns :sol:`true`.
 
 
 |T| A third party (non-owner) adds an address
@@ -226,7 +226,7 @@ This test was carried out as multiple sub-tests with:
     * For every submitted item in address list an event :sol:`WhitelistUpdated`
       with :sol:`operation = "Removed"` is logged.
     * For every submitted address :sol:`addr` the function call
-      :sol:`isWhitelisted(addr)` returns  :sol:`false`.
+      :sol:`isWhitelisted(addr)` returns :sol:`false`.
 
 
 |T| A third party (non-owner) removes an address
@@ -536,7 +536,7 @@ During Crowdsale Period
       :sol:`TOTAL_TOKENS_FOR_CROWDSALE`.
     * An event :sol:`TokenPurchase` with received token amount and worth in wei
       logged.
-    * The crowdsale ends early, i.e. :sol:`hasEnded` becomes true.
+    * The crowdsale ends early, i.e. :sol:`hasEnded()` becomes true.
 
 
 |T| A third party (non-whitelisted-investor) buys tokens
@@ -555,7 +555,7 @@ After Crowdsale Period
 |T| Invariants
 ''''''''''''''
 
-|R| After -crowdsale the following condition must hold:
+|R| After crowdsale the following condition must hold:
     * `token.totalSupply == TOTAL_TOKENS_SUPPLY`
 
 

@@ -274,7 +274,7 @@ itself as it is supposed to have been thoroughly tested already.</p>
 <ol class="arabic simple">
 <li>All involved accounts and their roles had to be identified.</li>
 <li>The capabilities of these roles within different periods along the
-project’s life time were identified.</li>
+project’s life cycle were identified.</li>
 <li>Invariants within the different life cycle periods had to be
 identified.</li>
 <li>Based on the steps above test cases were drafted.
@@ -455,7 +455,7 @@ and invalid addresses (<code class="code sol docutils literal"><span class="pre"
 <li>For every submitted item in address list an event <code class="code sol docutils literal"><span class="pre">WhitelistUpdated</span></code>
 with <code class="code sol docutils literal"><span class="pre">operation</span> <span class="pre">=</span> <span class="pre">&quot;Added&quot;</span></code> is logged.</li>
 <li>For every submitted address <code class="code sol docutils literal"><span class="pre">addr</span></code> the function call
-<code class="code sol docutils literal"><span class="pre">isWhitelisted(addr)</span></code> returns  <code class="code sol docutils literal"><span class="pre">true</span></code>.</li>
+<code class="code sol docutils literal"><span class="pre">isWhitelisted(addr)</span></code> returns <code class="code sol docutils literal"><span class="pre">true</span></code>.</li>
 </ul>
 </dd>
 </dl>
@@ -493,7 +493,7 @@ and invalid addresses (<code class="code sol docutils literal"><span class="pre"
 <li>For every submitted item in address list an event <code class="code sol docutils literal"><span class="pre">WhitelistUpdated</span></code>
 with <code class="code sol docutils literal"><span class="pre">operation</span> <span class="pre">=</span> <span class="pre">&quot;Removed&quot;</span></code> is logged.</li>
 <li>For every submitted address <code class="code sol docutils literal"><span class="pre">addr</span></code> the function call
-<code class="code sol docutils literal"><span class="pre">isWhitelisted(addr)</span></code> returns  <code class="code sol docutils literal"><span class="pre">false</span></code>.</li>
+<code class="code sol docutils literal"><span class="pre">isWhitelisted(addr)</span></code> returns <code class="code sol docutils literal"><span class="pre">false</span></code>.</li>
 </ul>
 </dd>
 </dl>
@@ -862,7 +862,7 @@ remaining tokens.</li>
 <code class="code sol docutils literal"><span class="pre">TOTAL_TOKENS_FOR_CROWDSALE</span></code>.</li>
 <li>An event <code class="code sol docutils literal"><span class="pre">TokenPurchase</span></code> with received token amount and worth in wei
 logged.</li>
-<li>The crowdsale ends early, i.e. <code class="code sol docutils literal"><span class="pre">hasEnded</span></code> becomes true.</li>
+<li>The crowdsale ends early, i.e. <code class="code sol docutils literal"><span class="pre">hasEnded()</span></code> becomes true.</li>
 </ul>
 </dd>
 </dl>
@@ -885,7 +885,7 @@ logged.</li>
 <div class="section" id="id4">
 <h4>Test: Invariants<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
 <dl class="docutils">
-<dt>Rationale: After -crowdsale the following condition must hold:</dt>
+<dt>Rationale: After crowdsale the following condition must hold:</dt>
 <dd><ul class="first last simple">
 <li><cite>token.totalSupply == TOTAL_TOKENS_SUPPLY</cite></li>
 </ul>

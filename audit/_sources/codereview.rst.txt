@@ -1,4 +1,5 @@
 .. highlight:: solidity
+    :linenothreshold: 5
 
 ===========
 Code Review
@@ -6,7 +7,7 @@ Code Review
 
 An essential part of an audit is the code review.
 
-The aim is to identify possible issues at that may constitute a risk to
+The aim is to identify possible issues that may constitute a risk to
 parts of or the whole project by investigating carefully the code from its
 overall global dependency structure down to single lines of code.
 
@@ -57,14 +58,14 @@ Results
 
 **No major or minor issues were found.**
 
-The overall code is easy to read, its structure is easy to follow,
+The source code is easy to read, its structure is easy to follow,
 and its intention is easy to grasp.
 
 Nearly all written code conforms *Solidity*'s style guide.
 All sources -- with the exception of *Whitelist*, which is a very simple
 and self-explaining contract -- are well documented.
 
-All arithmetic operations are carried out by the well-known SafeMath library.
+All arithmetic operations are carried out by the well-known *SafeMath* library.
 There are no deep nested code dependency trees and no intertwined code paths.
 
 The extensive usage of *OpenZeppelin*'s *Solidity* framework is a good
@@ -150,6 +151,7 @@ Add an additional test and ignore addresses that were/weren't already
 whitelisted.
 
 .. code-block:: solidity
+    :lineno-start: 10
     :emphasize-lines: 3,12
 
     function addToWhitelist(address[] _addresses) public onlyOwner {
@@ -224,10 +226,9 @@ the cap), as he purchased less tokens than noted there.
 Put the update of :sol:`trackBuyersPurchases` after remainder logic.
 
 .. code-block:: solidity
-    :emphasize-lines: 13
+    :emphasize-lines: 11
+    :lineno-start: 138
 
-    function buyTokens(address beneficiary)
-        ...
         //remainder logic
         if (token.totalSupply().add(tokens) > TOTAL_TOKENS_FOR_CROWDSALE) {
             tokens = TOTAL_TOKENS_FOR_CROWDSALE.sub(token.totalSupply());
@@ -239,7 +240,6 @@ Put the update of :sol:`trackBuyersPurchases` after remainder logic.
         }
 
         trackBuyersPurchases[beneficiary] = trackBuyersPurchases[beneficiary].add(tokens);
-        ...
 
 
 Function *buyToken(…)*
@@ -280,10 +280,9 @@ he paid for.
 Calculate the correct amount of bought tokens by
 
 .. code-block:: solidity
-    :emphasize-lines: 5-6
+    :emphasize-lines: 3-4
+    :lineno-start: 141
 
-    function buyTokens(address beneficiary)
-        ...
         //remainder logic
         if (token.totalSupply().add(tokens) > TOTAL_TOKENS_FOR_CROWDSALE) {
             weiAmount = TOTAL_TOKENS_FOR_CROWDSALE.sub(token.totalSupply()).div(rate);
@@ -293,18 +292,17 @@ Calculate the correct amount of bought tokens by
             remainderPurchaser = msg.sender;
             remainderAmount = msg.value.sub(weiAmount);
         }
-        ...
 
 and account for remaining token amount being below rate in
 
 .. code-block:: solidity
     :emphasize-lines: 2
+    :lineno-start: 161
 
     function hasEnded() public view returns (bool) {
         if (token.totalSupply() > TOTAL_TOKENS_FOR_CROWDSALE - rate) {
             return true;
         }
-        ...
 
 **Final thoughts:**
 Leave the code as it is, as the additional gas cost of an exact solution
@@ -332,7 +330,8 @@ doing the cheaper test.
 Simplify and reorder the tests. Lazy evaluation of binary *OR* operator won't
 test the second condition if the first is met already.
 
-::
+.. code-block:: solidity
+    :lineno-start: 161
 
     function hasEnded() public view returns (bool) {
         return super.hasEnded() || token.totalSupply() == TOTAL_TOKENS_FOR_CROWDSALE;
@@ -362,6 +361,7 @@ Retrieve the total tokens supply only once.
 
 .. code-block:: solidity
     :emphasize-lines: 11,13-14
+    :lineno-start: 179
 
     function finalization() internal {
         // This must have been set manually prior to finalize().
@@ -402,7 +402,8 @@ it’s own line at the same indentation level as the function body. The closing
 parenthesis and opening bracket should be placed on their own line as well at
 the same indentation level as the function declaration.
 
-::
+.. code-block:: solidity
+    :lineno-start: 52
 
     function ODEMCrowdsale(
         uint256 _startTime,
@@ -442,7 +443,8 @@ Function *buyToken(…)*
 The :sol:`buyTokens` function ensures that token purchaser and beneficiary
 are the same:
 
-::
+.. code-block:: solidity
+    :lineno-start: 126
 
     require(msg.sender == beneficiary);
 
@@ -494,6 +496,7 @@ base contracts
 There are no custom code extensions besides definition of public constants
 
 .. code-block:: solidity
+    :lineno-start: 12
 
     string public constant name = "ODEM Token";
     string public constant symbol = "ODEM";
@@ -540,11 +543,10 @@ is below the cap :sol:`totalTeamAndAdvisorsAllocation`, a team members
 allocation can be set again after he/she unlocked his/her share -- again
 only once until next unlock, etc.
 
-::
+.. code-block:: solidity
+    :lineno-start: 45
 
-    ...
     assert(teamAndAdvisorsAllocations[teamOrAdvisorsAddress] == 0); // can only add once.
-    ...
 
 The only purpose imaginable for this constraints is to increase trust of team
 members, i.e. that the contract owner is not able to change one's allocation
@@ -609,6 +611,7 @@ Use :sol:`require` instead :sol:`assert` at the beginning of these functions:
 
 .. code-block:: solidity
     :emphasize-lines: 6
+    :lineno-start: 40
 
     function addTeamAndAdvisorsAllocation(address teamOrAdvisorsAddress, uint256 allocationValue)
         external
@@ -616,21 +619,20 @@ Use :sol:`require` instead :sol:`assert` at the beginning of these functions:
         returns(bool)
     {
         require(teamAndAdvisorsAllocations[teamOrAdvisorsAddress] == 0); // can only add once.
-        ...
 
 .. code-block:: solidity
     :emphasize-lines: 2
+    :lineno-start: 58
 
     function unlock() external {
         require(now >= unlockedAt);
-        ...
 
 .. code-block::  solidity
     :emphasize-lines: 2
+    :lineno-start: 76
 
     function kill() public onlyOwner {
         require(now >= canSelfDestruct);
-        ...
 
 
 Contract Naming
@@ -645,10 +647,10 @@ But thus the contract name is misleading.
 **Proposal:**
 Rename the contract to plural form by adding an "s":
 
-::
+.. code-block:: solidity
+    :lineno-start: 11
 
     contract TeamAndAdvisorsAllocations is Ownable {
-        ...
 
 
 Constant *totalTeamAndAdvisorsAllocation*
@@ -661,6 +663,7 @@ Consider renaming it and placing it above state variables.
 
 .. code-block:: solidity
     :emphasize-lines: 1
+    :lineno-start: 14
 
     uint256 private constant TOTAL_TEAM_AND_ADVISORS_ALLOCATION = 38763636e18; // 38 mm
 
@@ -686,7 +689,3 @@ Function *addTeamAndAdvisorsAllocation(…)*
 
 Unnecessary return value.
 A call to this function will always return :sol:`true` if not rejected.
-
-
-
-

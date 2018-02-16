@@ -7,6 +7,10 @@ Functionality
 This chapter describes the overall structure and the functionality in detail
 of the contracts that constitute the *ODEM ICO* smart contract project.
 
+**Preliminary Note**
+
+Here, the term "tokens" always refers to the smallest unit, where all token
+amounts are whole numbers.
 
 
 ------------------
@@ -37,9 +41,9 @@ will be created exactly one instance for every contract in the project.
    :sup:`Diagram of ODEM ICO contracts`
 
 The contract *TeamAndAdvisorsAllocation* is loosely coupled to the other
-contracts, as it's not essential for the ICO crowdsale and token trading.
+contracts, as it's not essential for the crowdsale or token trading.
 Anytime before crowdsale finalization the crowdsale's contract owner can
-decide replace it by another implementation or even to set a regular user
+decide to replace it by another implementation or even to set a regular user
 account becoming the crowdsale instance's :sol:`teamAndAdvisorAllocation`
 address.
 
@@ -56,12 +60,12 @@ The contracts must be deployed in the following order:
 
 #. **ODEMCrowdsale** has to be deployed manually after :sol:`Whitelist`.
    Attention has to be payed to correct values of parameters
-   sol:`_startTime`, :sol:`_endTime`, :sol:`_whitelist`, :sol:`_wallet`,
-   and sol:`_rewardWallet` as these cannot be changed after deployment.
+   :sol:`_startTime`, :sol:`_endTime`, :sol:`_whitelist`, :sol:`_wallet`,
+   and :sol:`_rewardWallet` as these cannot be changed after deployment.
 
 #. **ODEMToken** will automatically be deployed during initialization of
    :sol:`ODEMCrowdsale`.
-   To determine the token's address call public getter function
+   To determine the token's address call the public getter function
    :sol:`token()` of the crowdsale instance.
 
 #. **TeamAndAdvisorsAllocation** has to be deployed manually before
@@ -79,7 +83,7 @@ The contracts must be deployed in the following order:
    status is as expected.
 
    *Rationale:* the constructor of :sol:`ODEMCrowdsale` will accept any
-   address as its :sol:`_whitelist` parameter, but the actual usage of
+   address as :sol:`_whitelist` parameter, but the actual usage of
    :sol:`Whitelist`, that is to check for if an address was whitelisted,
    doesn't happen before the crowdsale period starts.
 
@@ -95,8 +99,8 @@ addresses.
 In context of *ODEMCrowdsale* it will contain the addresses of investors
 who are allowed to buy tokens during the crowdsale period.
 
-When creating an *ODEMCrowdsale* instance, the address of an existing
-(deployed) *Whitelist* instance has to be given.
+When creating an *ODEMCrowdsale* instance, the address of an existing,
+i.e. deployed, *Whitelist* instance has to be given.
 
 
 Features
@@ -122,7 +126,7 @@ Only the *Whitelist* instance's owner is allowed to add/remove addresses
 to/from the whitelist.
 
 Initially, this will be the account who deployed the *Whitelist*
-instance in the first place, but the ownership can be transferred later
+instance in the first place, but ownership can be transferred later
 by the current owner to any other account.
 
 The owner doesn't need to be the same as of the *ODEMCrowdsale*
@@ -133,8 +137,8 @@ instance.
 Their addresses are stored in the contract instance.
 
 
-Lifetime
-~~~~~~~~
+Lifecycle
+~~~~~~~~~
 
 *Whitelist*'s behavior is invariant with respect to time.
 
@@ -169,42 +173,42 @@ The following token related constants are defined:
 
 -  **BOUNTY_REWARD_SHARE**
 
-   = :sol:`43666667e18` (~ 43.7M Tokens)
+   = :sol:`43666667e18` (~ 43.7M ×10 :sup:`18` tokens)
 
    Amount of tokens minted in favor of the reward wallet account on
    crowdsale finalization.
 
 -  **VESTED_TEAM_ADVISORS_SHARE**
 
-   = :sol:`38763636e18` (~ 38.8M Tokens)
+   = :sol:`38763636e18` (~ 38.8M ×10 :sup:`18` tokens)
 
    Amount of tokens minted in favor of *TeamAndAdvisorAllocation*
    instance on crowdsale finalization.
 
 -  **NON_VESTED_TEAM_ADVISORS_SHARE**
 
-   :sol:`= 5039200e18` (~ 5M Tokens)
+   :sol:`= 5039200e18` (~ 5M ×10 :sup:`18` tokens)
 
    Amount of tokens minted in favor of the wallet account on crowdsale
    finalization.
 
 -  **COMPANY_SHARE**
 
-   :sol:`= 71300194e18` (~ 71.3M Tokens)
+   :sol:`= 71300194e18` (~ 71.3M ×10 :sup:`18` tokens)
 
    Amount of tokens minted in favor of the wallet account on crowdsale
    finalization.
 
 -  **PRE_CROWDSALE_CAP**
 
-   :sol:`= 58200000e18` (~ 58.2M Tokens)
+   :sol:`= 58200000e18` (~ 58.2M ×10 :sup:`18` tokens)
 
    Maximum total amount of tokens minted in favor of the private
    investors during pre-crowdsale.
 
 -  **PUBLIC_CROWDSALE_CAP**
 
-   :sol:`= 180000000e18` (~ 180M Tokens)
+   :sol:`= 180000000e18` (~ 180M ×10 :sup:`18` tokens)
 
    Maximum total amount of tokens bought by investors during crowdsale
    if the pre-crowdsale cap was reached.
@@ -214,14 +218,15 @@ The following token related constants are defined:
 
 -  **TOTAL_TOKENS_FOR_CROWDSALE**
 
-   :sol:`= PRE_CROWDSALE_CAP + PUBLIC_CROWDSALE_CAP` (~ 238.2M Tokens)
+   :sol:`= PRE_CROWDSALE_CAP + PUBLIC_CROWDSALE_CAP`
+   (~ 238.2M ×10 :sup:`18` tokens)
 
    Maximum total amount of tokens minted during pre-crowdsale and
    crowdsale.
 
 -  **TOTAL_TOKENS_SUPPLY**
 
-   :sol:`= 396969697e18` (~ 397M Tokens)
+   :sol:`= 396969697e18` (~ 397M ×10 :sup:`18` tokens)
 
    Total supply of tokens after finalization.
 
@@ -239,7 +244,7 @@ The following token related constants are defined:
 
 -  **PERSONAL_FIRST_HOUR_CAP**
 
-   = :sol:`2000000e18` (~ 2M Tokens)
+   = :sol:`2000000e18` (~ 2M ×10 :sup:`18` tokens)
 
    Maximum amount of tokens an investor can buy during the first hour
    after crowdsale start.
@@ -255,7 +260,7 @@ any time to any other account.
 
 **Pausable**
 
-During the crowdsale (i.e. from start till end, see *Lifetime*) the sale
+During the crowdsale (i.e. from start till end, see *Lifecycle*) the sale
 of tokens to investors can be halted and continued by the
 *ODEMCrowdsale* instance's owner.
 
@@ -286,7 +291,7 @@ created/deployed it in the first place and can
 -  adjust the (tokens per wei) rate at any time to any non-zero value
 -  mint tokens for the benefit of any private investor (in fact any
    account) as long as the total token supply will not exceed the
-   pre-crowdsale cap (see *Constants*: :sol`PRE_CROWDSALE_CAP`) and the
+   pre-crowdsale cap (see *Constants*: :sol:`PRE_CROWDSALE_CAP`) and the
    crowdsale has not started yet
 -  set the address of a deployed :sol:`TeamAndAdvisorsAllocation` instance
 -  finalize the contract instance after the crowdsale has ended (and
@@ -302,7 +307,7 @@ The wallet address must be given when creating a *ODEMCrowdsale*
 instance and cannot be changed afterwards.
 
 When the crowdsale is finalized, a predefined amount of tokens (see
-*Constants*: :sol:`NON_VESTED_TEAM_ADVISORS_SHARE`, :sol:`COMPANY_SHARE`) and
+*Constants*: :sol:`NON_VESTED_TEAM_ADVISORS_SHARE`, :sol:`COMPANY_SHARE`) plus
 all remaining tokens, i.e. the difference of total tokens supply to some
 constant (see *Constants*: :sol:`TOTAL_TOKENS_SUPPLY`) will be minted for
 the benefit of the wallet account.
@@ -358,8 +363,8 @@ affect the ownership of its assigned *ODEMToken* instance (it will
 remain the crowdsale contract instance).
 
 
-Lifetime
-~~~~~~~~
+Lifecycle
+~~~~~~~~~
 
 **Pre-Crowdsale**
 
@@ -406,13 +411,13 @@ time.
 **Finalization**
 
 After end of crowdsale it has to be finalized manually by the owner.
-As prerequisite, an address of a :sol:`TeamAndAdvisorsAllocation` instance
+As prerequisite, the address of a :sol:`TeamAndAdvisorsAllocation` instance
 has to be set prior to finalization.
 
-A fixed amount of token gets minted for benefit of the
+A fixed amount of tokens gets minted for benefit of the
 *TeamAndAdvisorAllocation* instance, the wallet and reward wallet.
 
-If the total supplied tokens is below a amount (see *Constants*:
+If the total supplied tokens is below a predefined cap (see *Constants*:
 :sol:`TOTAL_TOKENS_SUPPLY`) , the remaining tokens (i.e. the difference)
 will be minted for the benefit of the wallet account.
 
@@ -430,7 +435,7 @@ given limits (see *Constants*).
 
 **Adjustment of rate**
 
-The (token per wei) rate must be set by the owner only. This can be done
+The (tokens per wei) rate must be set by the owner only. This can be done
 at any time.
 
 **Private Investments**
@@ -441,7 +446,7 @@ pre-crowdsale token minting can be triggered by the owner only.
 **Regular Investments**
 
 Investors must be whitelisted prior to be able to buy tokens. The
-beneficiary of a tokens purchase is always the purchaser (the investor)
+beneficiary of a tokens purchase is always the purchaser (= investor)
 himself/herself.
 
 If the crowdsale was paused, no token purchase is possible.
@@ -452,7 +457,7 @@ If the crowdsale was paused, no token purchase is possible.
 ODEMToken
 ---------
 
-An *ODEMToken* is an ERC20 compliant token contract.
+*ODEMToken* is an ERC20 compliant token contract.
 
 It isn't meant to be deployed by itself, but an instance of it to be
 automatically created when a new *ODEMCrowdsale* instance is
@@ -475,7 +480,7 @@ owner forever.
 **Pausable**
 
 The trade of tokens, i.e. transfer from one account to another, of
-tokens can be halted and continued by its owner (see *Lifetime*).
+tokens can be halted and continued by its owner (see *Lifecycle*).
 
 **Mintable**
 
@@ -522,8 +527,8 @@ So while the circle of token holders is limited until the crowdsale
 period ends, the *ODEMToken* is freely tradable afterwards.
 
 
-Lifetime
-~~~~~~~~
+Lifecycle
+~~~~~~~~~
 
 **Paused**
 
@@ -595,14 +600,19 @@ Constants
 ~~~~~~~~~
 
 -  **totalTeamAndAdvisorsAllocation** :sol:`= 38763636e18` (~ 38.8M
-   Tokens)
+   ×10 :sup: 18 tokens)
 
-   Total maximum amount of tokens team members and advisors can be
-   assigned.
+   Total maximum amount of tokens that can get assigned to team members
+   and advisors.
 
 
 Features
 ~~~~~~~~
+
+**Ownable**
+
+The *TeamAndAdvisorsAllocation* contract is *Ownable*, thus exposing a method
+to its owner for transferring the ownership to a new address.
 
 **Retention period**
 
@@ -620,10 +630,6 @@ Accounts/Roles
 
 **Owner**
 
-This contract instance will be owned by the same account which was owner
-of the creating *ODEMCrowdsale* instance at the time of its
-finalization.
-
 The owner can assign token shares to team members and advisors.
 
 One year after the creation of this contract instance the owner can
@@ -631,16 +637,15 @@ destroy it.
 
 **Team Member or Advisor**
 
-These accounts will be assigned a share in the tokens this contract
-instance possesses.
+To these accounts a share in tokens will be assigned.
 
 After the expire of the initial retention period, they can unlock (i.e.
 withdraw) their share in tokens, which will be transferred to their
 accounts.
 
 
-Lifetime
-~~~~~~~~
+Lifecycle
+~~~~~~~~~
 
 **Retention Period**
 
@@ -650,7 +655,7 @@ able to transfer them to their own account.
 
 **Unlock Period**
 
-After the retention period of 182 days has ended, team members and
+After the retention period has ended, team members and
 advisors are allowed to unlock their token share, thus triggering the
 transfer to their own accounts.
 
@@ -661,7 +666,7 @@ owner is allowed to destroy this contract instance.
 
 All remaining tokens of this contract instance will be transferred to
 the owner's account. Team members and advisors who have not unlocked
-their token share will lose it.
+their tokens share will lose it.
 
 
 Constraints
@@ -685,4 +690,4 @@ some team members won't be able to unlock their share.
 
 **Time Periods**
 
-Constraints regarding time are already described in *Lifetime*.
+Constraints regarding time are already described in *Lifecycle*.
